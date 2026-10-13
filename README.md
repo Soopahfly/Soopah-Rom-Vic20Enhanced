@@ -25,6 +25,24 @@ figure is calculated normally; an unexpanded VIC-20 displays 3583 bytes free.
 This preview is rendered from the ROM's tested startup screen memory, with
 approximate RGB colours and a visible cursor blink phase.
 
+## Optional Character Fonts
+
+Two optional **4 KB CHARGEN ROMs** are available as normal repository downloads,
+independently of the experimental PAL/NTSC builds:
+
+- [Clean 5x7 font](roms/chargen/chargen-clean-5x7.bin?raw=true)
+- [Compact 5x6 font](roms/chargen/chargen-compact-5x6.bin?raw=true)
+
+![Stock, clean and compact fonts on the stable startup screen](docs/chargen-comparison.png)
+
+Select one as the character ROM, leaving BASIC and KERNAL unchanged. Both retain
+the screen layout and PETSCII graphics, including the rainbow. They redraw
+uppercase letters, digits and the full stop; lowercase and other punctuation
+remain stock. Smaller-looking letters do not add columns or free memory.
+Stock CHARGEN remains the default. Appearance and checksum-sensitive software
+can be affected; neither font is VICE- or hardware-tested yet.
+See [font notes, checksums and rebuilding](docs/chargen-fonts.md).
+
 ## Corrections
 
 ### Experimental PAL/NTSC Pair
@@ -100,7 +118,8 @@ For an emulator's separate ROM settings, use `roms/kernal.901486-07-fixed.bin` f
 KERNAL and `roms/basic.901486-01-fixed.bin` for BASIC. The combined
 `roms/vic20-fixed.bin` places BASIC first and KERNAL second; it is not a single
 8 KB replacement chip image. Install both patched ROMs together: the BASIC patches
-call helpers in the patched KERNAL. Keep the original character ROM.
+call helpers in the patched KERNAL. Keep the original character ROM unless
+deliberately selecting one of the optional fonts above.
 
 ## Build And Test
 

@@ -1,0 +1,26 @@
+{
+  "source": "https://www.zimmers.net/anonftp/pub/cbm/firmware/characters/vic20.bin",
+  "stockSha256": "bda280726cfe069ca70ef5e2f2d95a29f69d3950c859a12e6979464963fcf502",
+  "variants": [
+    {
+      "name": "stock",
+      "bytes": 4096,
+      "modifiedGlyphSlots": 0,
+      "sha256": "bda280726cfe069ca70ef5e2f2d95a29f69d3950c859a12e6979464963fcf502"
+    },
+    {
+      "name": "clean-5x7",
+      "bytes": 4096,
+      "modifiedGlyphSlots": 148,
+      "sha256": "4e8e9dd0c94c2686cbda5d548b8059bc612a2c3fcb709143c01a2a45f0b3f51d"
+    },
+    {
+      "name": "compact-5x6",
+      "bytes": 4096,
+      "modifiedGlyphSlots": 148,
+      "sha256": "7bab69cb72091508f084eee83dc925f640952b42ef7b8e716e38b41aa892198c"
+    }
+  ],
+  "startup": "stable PAL",
+  "limitations": "ROM-executed screen; approximate colours, no VICE/hardware test. Uppercase, digits and full stop changed; lowercase and other punctuation remain stock."
+}

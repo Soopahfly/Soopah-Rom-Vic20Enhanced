@@ -1,5 +1,17 @@
 # Changelog
 
+## Optional CHARGEN Fonts - 2026-10-13
+
+- Add clean 5x7 and compact 5x6 character ROMs to the main download section.
+- Keep stock CHARGEN as default; no changes to released BASIC or KERNAL images.
+- Redraw uppercase, digits and full stop in both banks, with matching inverses.
+  Preserve lowercase, remaining punctuation, PETSCII graphics and character codes.
+- Include a reproducible builder, stock-ROM hash check, modification allowlist,
+  inverse-glyph checks, output checksums and stable-ROM startup previews.
+- Each image remains 4096 bytes; character cells and memory availability do not change.
+- Fonts are optional normal downloads, not universal experimental prereleases.
+  VICE, physical video readability and software compatibility remain unverified.
+
 ## Universal 8 KB Experiment 3 - 2026-10-13
 
 - Display the detected PAL/NTSC mode in blue at row three, column six.
