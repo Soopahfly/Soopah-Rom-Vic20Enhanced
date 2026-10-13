@@ -52,7 +52,7 @@ COMPACT = {
 }
 
 
-def make_rom(stock, glyphs, height):
+def make_rom(stock, glyphs, height, striped=True):
     result = bytearray(stock)
     allowed = set()
     for char, encoded in glyphs.items():
@@ -73,11 +73,15 @@ def make_rom(stock, glyphs, height):
     # Code $69 is a full patterned tile, not a striped triangular wedge.
     striped_tip = stock[2048+0x69*8:2048+0x6A*8]
     assert striped_tip == bytes.fromhex('993366CC993366CC')
-    for reverse in (0,128):
-        offset = (0x69+reverse)*8
-        result[offset:offset+8] = bytes(v ^ (255 if reverse else 0) for v in striped_tip)
-        allowed.update(range(offset,offset+8))
-    assert result[0x69*8:0x6A*8] == result[2048+0x69*8:2048+0x6A*8]
+    if striped:
+        for reverse in (0,128):
+            offset = (0x69+reverse)*8
+            result[offset:offset+8] = bytes(v ^ (255 if reverse else 0) for v in striped_tip)
+            allowed.update(range(offset,offset+8))
+        assert result[0x69*8:0x6A*8] == result[2048+0x69*8:2048+0x6A*8]
+    else:
+        for code in (0x69,0xE9):
+            assert result[code*8:(code+1)*8] == stock[code*8:(code+1)*8]
     assert result[0xA0*8:0xA1*8] == stock[0xA0*8:0xA1*8]  # Solid rainbow blocks.
     assert len(result) == 4096
     assert all(a == b or i in allowed for i, (a,b) in enumerate(zip(stock,result)))
@@ -138,20 +142,32 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True)
     memory, base = boot_screen(args.universal)
     variants = [('stock',stock,0), ('clean-5x7',*make_rom(stock,CLEAN,7)),
-                ('compact-5x6',*make_rom(stock,COMPACT,6))]
+                ('compact-5x6',*make_rom(stock,COMPACT,6)),
+                ('clean-5x7-smooth',*make_rom(stock,CLEAN,7,striped=False)),
+                ('compact-5x6-smooth',*make_rom(stock,COMPACT,6,striped=False))]
+    # Preserve the original user-tested smooth downloads byte for byte.
+    assert hashlib.sha256(variants[3][1]).hexdigest() == '4e8e9dd0c94c2686cbda5d548b8059bc612a2c3fcb709143c01a2a45f0b3f51d'
+    assert hashlib.sha256(variants[4][1]).hexdigest() == '7bab69cb72091508f084eee83dc925f640952b42ef7b8e716e38b41aa892198c'
     comparison = Image.new('RGB',(1536,532),(238,241,244))
+    smooth_comparison = comparison.copy()
     draw = ImageDraw.Draw(comparison)
+    smooth_draw = ImageDraw.Draw(smooth_comparison)
     font = ImageFont.load_default(size=20)
     report = {'source':'https://www.zimmers.net/anonftp/pub/cbm/firmware/characters/vic20.bin',
               'stockSha256':hashlib.sha256(stock).hexdigest(), 'variants':[],
               'startup':'universal PAL fallback' if args.universal else 'stable PAL',
-              'rainbow':'Uppercase screen code $69 uses stock mixed-case diagonal stripes, with matching inverse.',
+              'rainbow':'Default filenames use striped uppercase tips; -smooth filenames retain the original uppercase tip and inverse. Mixed-case tips remain stock in all variants.',
               'limitations':'ROM-executed screen; approximate colours. Previous font versions were user-tested at PAL startup in VICE; updated uppercase striped tips are not yet VICE/hardware-tested. Lowercase and other punctuation remain stock.'}
     for index,(name,rom,count) in enumerate(variants):
         preview = render(rom,memory,base)
         preview.save(OUT / f'{name}.png')
-        comparison.paste(preview,(index*512,52))
-        draw.text((index*512+20,16),name.upper().replace('-',' '), fill=(30,35,40),font=font)
+        if index < 3:
+            comparison.paste(preview,(index*512,52))
+            draw.text((index*512+20,16),name.upper().replace('-',' '), fill=(30,35,40),font=font)
+        if index == 0 or index >= 3:
+            column = 0 if index == 0 else index-2
+            smooth_comparison.paste(preview,(column*512,52))
+            smooth_draw.text((column*512+20,16),name.upper().replace('-',' '), fill=(30,35,40),font=font)
         if name != 'stock':
             (OUT / f'chargen-{name}.bin').write_bytes(rom)
             if args.check_published:
@@ -159,8 +175,12 @@ def main():
         report['variants'].append({'name':name,'bytes':len(rom),'modifiedGlyphSlots':count,
                                    'sha256':hashlib.sha256(rom).hexdigest()})
     comparison.save(OUT / 'comparison.png')
+    smooth_comparison.save(OUT / 'smooth-comparison.png')
     (OUT / 'report.json').write_text(json.dumps(report,indent=2)+'\n')
-    print(f'PASS: both 4096-byte sketches preserve all non-target glyphs and matching inverses.\n{OUT / "comparison.png"}')
+    (OUT / 'SHA256SUMS').write_text(''.join(
+        f'{item["sha256"]}  chargen-{item["name"]}.bin\n'
+        for item in report['variants'] if item['name'] != 'stock'))
+    print(f'PASS: all four 4096-byte fonts preserve non-target glyphs and matching inverses; smooth fonts match the original downloads.\n{OUT / "comparison.png"}')
 
 
 if __name__ == '__main__':

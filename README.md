@@ -27,20 +27,25 @@ approximate RGB colours and a visible cursor blink phase.
 
 ## Optional Character Fonts
 
-Two optional **4 KB CHARGEN ROMs** are available as normal repository downloads,
+Two optional fonts, each with smooth or striped rainbow tips, are available as
+**4 KB CHARGEN ROMs** in the normal repository downloads,
 independently of the experimental PAL/NTSC builds:
 
-- [Clean 5x7 font](roms/chargen/chargen-clean-5x7.bin?raw=true)
-- [Compact 5x6 font](roms/chargen/chargen-compact-5x6.bin?raw=true)
+| Font | Smooth Tips (Original) | Striped Tips |
+| --- | --- | --- |
+| Clean 5x7 | [Download](roms/chargen/chargen-clean-5x7-smooth.bin?raw=true) | [Download](roms/chargen/chargen-clean-5x7.bin?raw=true) |
+| Compact 5x6 | [Download](roms/chargen/chargen-compact-5x6-smooth.bin?raw=true) | [Download](roms/chargen/chargen-compact-5x6.bin?raw=true) |
 
 ![Stock, clean and compact fonts on the stable startup screen](docs/chargen-comparison.png)
 
 Select one as the character ROM, leaving BASIC and KERNAL unchanged. Both retain
 the screen layout and solid rainbow blocks. They redraw
 uppercase letters, digits and the full stop; lowercase and other punctuation
-remain stock. The rainbow tips use the stock mixed-case diagonal stripe tile
+remain stock. The striped versions' rainbow tips use the stock mixed-case diagonal stripe tile
 in uppercase mode too; its reverse-video partner is updated to match.
-Other PETSCII graphics remain unchanged. Smaller-looking letters do not add columns or free memory.
+The smooth versions are byte-identical to the original font downloads and retain
+all stock PETSCII graphics. Mixed-case mode still uses its stock striped tip in
+either version. Smaller-looking letters do not add columns or free memory.
 Stock CHARGEN remains the default. Appearance and checksum-sensitive software
 can be affected. The previous fonts were user-tested at PAL startup in VICE;
 these updated uppercase striped tips have not yet been VICE- or hardware-tested.

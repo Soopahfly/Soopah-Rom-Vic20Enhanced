@@ -1,5 +1,13 @@
 # Changelog
 
+## Keep Both CHARGEN Tip Styles - 2026-10-13
+
+- Restore the original clean 5x7 and compact 5x6 fonts as `-smooth.bin` downloads.
+- Keep the striped versions at their existing URLs; all four are main downloads.
+- Check smooth images against their original published hashes and retain stock
+  graphics. Mixed-case mode keeps its original striped tile in every version.
+- Add smooth previews, labelled download choices and all four checksums.
+
 ## Striped CHARGEN Rainbow Tips - 2026-10-13
 
 - Give both optional fonts the stock mixed-case diagonal stripe tile at uppercase

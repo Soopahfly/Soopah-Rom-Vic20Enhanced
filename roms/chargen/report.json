@@ -19,9 +19,21 @@
       "bytes": 4096,
       "modifiedGlyphSlots": 150,
       "sha256": "fb5e6aeca17c1e0eb98ab220dedffe3b1a8edda89b5129f7f66f0dc448284e31"
+    },
+    {
+      "name": "clean-5x7-smooth",
+      "bytes": 4096,
+      "modifiedGlyphSlots": 148,
+      "sha256": "4e8e9dd0c94c2686cbda5d548b8059bc612a2c3fcb709143c01a2a45f0b3f51d"
+    },
+    {
+      "name": "compact-5x6-smooth",
+      "bytes": 4096,
+      "modifiedGlyphSlots": 148,
+      "sha256": "7bab69cb72091508f084eee83dc925f640952b42ef7b8e716e38b41aa892198c"
     }
   ],
   "startup": "stable PAL",
-  "rainbow": "Uppercase screen code $69 uses stock mixed-case diagonal stripes, with matching inverse.",
+  "rainbow": "Default filenames use striped uppercase tips; -smooth filenames retain the original uppercase tip and inverse. Mixed-case tips remain stock in all variants.",
   "limitations": "ROM-executed screen; approximate colours. Previous font versions were user-tested at PAL startup in VICE; updated uppercase striped tips are not yet VICE/hardware-tested. Lowercase and other punctuation remain stock."
 }
