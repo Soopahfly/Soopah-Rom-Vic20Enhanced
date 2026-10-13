@@ -1,5 +1,30 @@
 # Changelog
 
+## Universal 8 KB Experiment 1 - 2026-10-13
+
+- Assemble a universal KERNAL of exactly 8,192 bytes with a matching BASIC ROM.
+- Detect PAL/NTSC from a raster wrap, forcing non-interlace during measurement.
+- Restore the caller's VIC origin/interlace register after IOINIT detection.
+- Bound frozen-raster waits and fall back to PAL rather than hanging startup.
+- Select regional video origins, 60 Hz system timer and RS-232 baud constants,
+  including receive-start NMI lookup, unsupported-code behaviour and caller carry.
+- Preserve all 1,409 original label addresses, public jump slots and hardware vectors.
+- Keep the correctness fixes and stepped V2.26 screen; revert only the collector
+  self-copy speed-up to the stock mover to make room for VAL cleanup.
+- Use $02A1-$02A4 for VAL cleanup and $02A6 for the region flag. BASIC free memory
+  remains unchanged, but software using these formerly unused bytes can conflict.
+- Reclaim unselected keyboard data and compress the default CTRL table's FF run.
+  Standard keys and custom RAM tables are tested; direct reads of reclaimed ROM
+  bytes and nonstandard keyboard selectors are not compatible by guarantee.
+- Pass 2,230 universal-specific simulated cases, 2,275 core regression cases and
+  193 BASIC cases. Detection takes up to roughly one frame in the tested model.
+- Receive-start timer setup measures 96/100 CPU cycles (PAL/NTSC), versus stock
+  PAL's 20. This timing change requires real RS-232 validation; no claim of full
+  serial compatibility or corrected first-sample phase is made.
+- Keep stable sources, published ROMs and eight PAL build permutations unchanged.
+- Supply a separate experimental Actions artifact and commented generated source.
+- VICE, physical hardware, real tapes, cartridges and serial devices are untested.
+
 ## V2.26 - 2026-10-13
 
 ### Selectable Builds And Wiki

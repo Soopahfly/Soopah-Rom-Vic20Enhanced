@@ -9,9 +9,14 @@ The language and token set remain standard BASIC V2.
 - [Compatibility And Testing](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/wiki/Compatibility-And-Testing): installation and verification.
 - [Repository](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced)
 - [Default ROMs](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/tree/main/roms)
+- [Universal Experimental](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/wiki/Universal-Experimental): 8 KB PAL/NTSC pair for VICE testing.
 
 All eight option combinations are supported. All three choices default to enabled.
-No permanent RAM is allocated; an unexpanded machine still displays 3583 bytes
+The stable PAL build allocates no permanent RAM; an unexpanded machine still displays 3583 bytes
 free. All 1,409 original ROM labels and public vectors retain their addresses.
 Use BASIC and KERNAL from the same build folder. Keep the original character ROM.
 Physical hardware testing remains outstanding.
+
+The separate universal experiment keeps the bug fixes and screen, but uses stock
+string-collection timing and reserves five system-RAM bytes. It has simulated
+PAL/NTSC tests, not VICE or physical validation. Stable `roms/` remain unchanged.

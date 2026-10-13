@@ -13,6 +13,13 @@ public artifacts while signed in, or fork the repository and run their own
 Actions. Artifacts expire after 90 days. Main-branch and pull-request builds
 automatically produce all eight combinations.
 
+The additional **universal_experimental** switch builds the experimental PAL/NTSC
+pair as a separate `vic20-universal-8k-experimental` artifact. Automatic builds
+also test that pair. It currently includes the fixes, rainbow and V2.26 heading;
+the three stable switches do not change the experimental image. Read
+[Universal Experimental](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/wiki/Universal-Experimental)
+before installing it. Stable PAL artifacts and all eight combinations are unchanged.
+
 ## Options
 
 | Switch | On | Off |

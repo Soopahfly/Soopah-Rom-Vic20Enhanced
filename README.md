@@ -27,6 +27,25 @@ approximate RGB colours and a visible cursor blink phase.
 
 ## Corrections
 
+### Experimental PAL/NTSC Pair
+
+An **8 KB universal KERNAL** and matching 8 KB BASIC are available for testing.
+The stable PAL ROMs above are unchanged. Use both experimental images together;
+do not mix them with the stable patched BASIC or KERNAL.
+
+The universal build detects the video chip's raster timing, then selects the
+regional screen origin, 60 Hz system timer and RS-232 constants. It retains the
+bug fixes and stepped V2.26 screen. To fit, string collection uses the stock
+mover rather than the stable build's self-copy speed-up. It reserves five bytes
+of previously unused system RAM, without reducing BASIC's reported free memory.
+
+See [the experimental build and VICE instructions](docs/wiki/Universal-Experimental.md)
+and [GitHub prereleases](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/releases).
+Simulated tests pass; VICE, physical machines and real serial devices remain
+unverified. RS-232 interrupt setup is slower and needs particular attention.
+
+### Stable PAL Corrections
+
 1. **Tape filename overflow:** copy at most 187 characters into the 192-byte
    cassette buffer after its five-byte prefix. Longer names are truncated and the
    current filename length is updated. Names longer than 16 displayed characters
@@ -93,7 +112,12 @@ Download the successful run's ROM artifact. Each labelled folder contains both
 from the same folder together. Artifacts expire after 90 days.
 
 See [build choices](docs/wiki/Building-ROMs.md) and
-[patch notes](docs/wiki/Patch-Notes.md), also prepared for the GitHub wiki.
+[patch notes](docs/wiki/Patch-Notes.md), also published on the
+[GitHub wiki](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/wiki).
+
+The optional **universal_experimental** switch builds the universal test pair
+as a separate artifact. It currently has fixes, rainbow and V2.26 enabled;
+the eight selectable stable PAL combinations remain unchanged.
 
 ```sh
 node scripts/build-variants.mjs --all

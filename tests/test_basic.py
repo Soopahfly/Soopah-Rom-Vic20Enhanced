@@ -1,4 +1,5 @@
 import json
+import os
 import random
 import sys
 from pathlib import Path
@@ -7,7 +8,9 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / '.tools'))
 from py65.devices.mpu6502 import MPU
 
-FIXED = (ROOT / 'build/vic20-fixed.bin').read_bytes()
+EXPERIMENTAL = os.environ.get('VIC20_EXPERIMENTAL') == '1'
+OUT = ROOT / ('build/universal' if EXPERIMENTAL else 'verification')
+FIXED = (ROOT / ('build/universal/vic20-universal.bin' if EXPERIMENTAL else 'build/vic20-fixed.bin')).read_bytes()
 ORIGINAL = ((ROOT / 'reference/basic.901486-01.bin').read_bytes()
             + (ROOT / 'reference/kernal.901486-07.bin').read_bytes())
 RETURN = 0x7FFF
@@ -150,8 +153,12 @@ for count,length,fragmented in ((8,200,False),(32,128,False),(32,128,True)):
     benchmarks.append({'strings':count,'length':length,'fragmented':fragmented,
                        'originalCycles':old_cycles,'patchedCycles':new_cycles,
                        'reductionPercent':round(100*(old_cycles-new_cycles)/old_cycles,2)})
-assert all(item['patchedCycles'] < item['originalCycles'] for item in benchmarks if not item['fragmented'])
-record('Packed-heap cycle reduction measured against the original collector', 2)
+if EXPERIMENTAL:
+    assert all(item['patchedCycles'] == item['originalCycles'] for item in benchmarks)
+    record('Experimental fit retains stock collector timing', 3)
+else:
+    assert all(item['patchedCycles'] < item['originalCycles'] for item in benchmarks if not item['fragmented'])
+    record('Packed-heap cycle reduction measured against the original collector', 2)
 
 # Reclaimed NOPs must preserve keyboard/editor A, X, Y and status flags.
 for entry, stop in ((0xE65B,0xE672),(0xE800,0xE815),(0xEBED,0xEC00),(0xEC18,0xEC38)):
@@ -170,6 +177,7 @@ report = {'emulator':'py65 1.2.0, NMOS 6502','testGroups':len(results),
           'collectorBenchmarks':benchmarks,
           'limits':['Collector still performs repeated descriptor scans',
                     'Cycle counts are routine-level emulation, not hardware measurements',
+                    'Experimental VAL uses $02A1-$02A4' if EXPERIMENTAL else
                     'VAL borrows $FB-$FE but restores their caller values on both exits']}
-(ROOT/'verification/basic-test-report.json').write_text(json.dumps(report,indent=2)+'\n')
+(OUT/'basic-test-report.json').write_text(json.dumps(report,indent=2)+'\n')
 print(json.dumps(report['collectorBenchmarks'],indent=2))

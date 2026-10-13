@@ -1,15 +1,18 @@
 import json
+import os
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-PATCHED = ROOT / 'build'
+EXPERIMENTAL = os.environ.get('VIC20_EXPERIMENTAL') == '1'
+PATCHED = ROOT / ('build/universal' if EXPERIMENTAL else 'build')
+STEM = 'vic20-universal' if EXPERIMENTAL else 'vic20-fixed'
 sys.path.insert(0, str(ROOT / '.tools'))
 from py65.devices.mpu6502 import MPU
 
 ORIGINAL = ((ROOT / 'reference/basic.901486-01.bin').read_bytes()
             + (ROOT / 'reference/kernal.901486-07.bin').read_bytes())
-FIXED = (PATCHED / 'vic20-fixed.bin').read_bytes()
+FIXED = (PATCHED / f'{STEM}.bin').read_bytes()
 RETURN = 0x7FFF
 results = []
 
@@ -63,7 +66,7 @@ def record(name, cases):
 
 # All old ROM labels must retain their addresses, including internal entry points.
 label_count = 0
-for line in (PATCHED / 'vic20-fixed.labels').read_text().splitlines():
+for line in (PATCHED / f'{STEM}.labels').read_text().splitlines():
     fields = line.split()
     if len(fields) == 3 and fields[2].startswith('.LAB_'):
         expected = int(fields[2][5:], 16)
@@ -72,7 +75,10 @@ for line in (PATCHED / 'vic20-fixed.labels').read_text().splitlines():
             label_count += 1
 assert label_count > 500
 assert FIXED[0x3F80:0x3F85] == ORIGINAL[0x3F80:0x3F85]
-assert FIXED[0x3F8A:] == ORIGINAL[0x3F8A:], 'KERNAL public jump table or vectors changed'
+assert FIXED[0x3F8A:0x3FF6] == ORIGINAL[0x3F8A:0x3FF6], 'KERNAL public jump table changed'
+assert FIXED[0x3FFA:] == ORIGINAL[0x3FFA:], 'Hardware vectors changed'
+if not EXPERIMENTAL:
+    assert FIXED[0x3FF6:0x3FFA] == ORIGINAL[0x3FF6:0x3FFA]
 assert FIXED[0x239F:0x23A4] == ORIGINAL[0x239F:0x23A4], 'Initial RND seed changed'
 record('ROM labels, public jump table and hardware vectors preserved', label_count)
 
@@ -361,5 +367,5 @@ report = {
     'results': results,
     'limitations': ['No full-machine boot test', 'No PAL/NTSC hardware or real tape/RS-232 tests'],
 }
-(ROOT / 'verification/test-report.json').write_text(json.dumps(report, indent=2) + '\n')
+(ROOT / ('build/universal/test-report.json' if EXPERIMENTAL else 'verification/test-report.json')).write_text(json.dumps(report, indent=2) + '\n')
 print(json.dumps({'testGroups': report['testGroups'], 'cases': report['cases'], 'allPassed': True}))
