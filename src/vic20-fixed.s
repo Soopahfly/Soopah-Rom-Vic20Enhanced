@@ -1,4 +1,6 @@
-; Patched derivative: six VIC-20 ROM corrections, PAL 901486-07 target.
+; Soopah ROM V2.26: six VIC-20 ROM corrections and a compact startup rainbow.
+; Target: PAL 901486-07 KERNAL with the unchanged 901486-01 BASIC ROM.
+; V2.26 identifies this build; BASIC's language and token set remain standard V2.
 ; This build intentionally differs from the stock KERNAL; see README.md.
 
 ;***********************************************************************************;
@@ -8998,7 +9000,8 @@ LAB_E404
 LAB_E429
 	.byte	" BYTES FREE",$0D,$00
 LAB_E436
-; Pad to the original 22 bytes to preserve the following ROM addresses.
+; Frame the build identifier in the 19 columns before the rainbow. Three padding
+; spaces retain the original 22-byte field and all following ROM addresses.
 	.byte	$93,"* CBM BASIC V2.26 *   ",$0D,$00
 
 

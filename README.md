@@ -1,18 +1,22 @@
 # Soopah-Rom-Vic20Enhanced
 
-Commented, address-preserving corrections for the Commodore VIC-20 PAL KERNAL
-901486-07, with the standard BASIC 901486-01 ROM.
+**Soopah ROM V2.26** provides commented, address-preserving corrections for the
+Commodore VIC-20 PAL KERNAL 901486-07, with the standard BASIC 901486-01 ROM.
+V2.26 is this project's build identifier. The BASIC language and token set remain
+standard Commodore BASIC V2.
 
 The patched source builds to a 16 KB image at $C000-$FFFF. All 1,409 existing ROM
 labels, the public KERNAL jump table and hardware vectors retain their addresses.
 The BASIC ROM is unchanged. The patched KERNAL includes helper routines in existing
 spare ROM space and a startup banner reading `* CBM BASIC V2.26 *`. Three trailing
-spaces retain the original 22-byte banner field. Colours are unchanged.
+spaces retain the original 22-byte banner field. The default blue text, white
+background and cyan border are retained.
 An eleven-cell rainbow occupies the top-right three columns over five rows, with
 its flat edge against the right border. The heading is framed by asterisks and
-centred in the 19 columns before the rainbow. It uses existing character-ROM glyphs and
-the VIC-20's red, yellow, green, cyan and blue colours. Text rows, columns and the
-blue typing cursor retain their normal positions.
+centred in the 19 columns before the rainbow. It uses existing character-ROM
+glyphs and the VIC-20's red, yellow, green, cyan and blue colours. Text rows,
+columns and the blue typing cursor retain their normal positions. The free-memory
+figure is calculated normally; an unexpanded VIC-20 displays 3583 bytes free.
 
 ## Corrections
 
@@ -43,6 +47,12 @@ performance optimisations are included.
 | `scripts/build.mjs` | Portable build, address checks and published-ROM comparison |
 | `tests/test_vic20.py` | Focused NMOS 6502 emulator tests |
 | `verification/` | Build differences and test results |
+| `CHANGELOG.md` | Changes and verification limits for V2.26 |
+
+For an emulator's separate ROM settings, use `roms/kernal.901486-07-fixed.bin` for
+KERNAL and `roms/basic.901486-01-fixed.bin` for BASIC. The combined
+`roms/vic20-fixed.bin` places BASIC first and KERNAL second; it is not a single
+8 KB replacement chip image. Keep the original character ROM.
 
 ## Build And Test
 
@@ -64,11 +74,12 @@ After an intentional source change, `node scripts/build.mjs --update-roms` refre
 the published ROM files; run the tests before committing those outputs.
 
 All ten test groups pass. They cover the startup banner, the rainbow on both
-screen-memory bases, status and received-byte values 0-255,
-filename lengths 0-255, handshake combinations, empty/full queues, pointer wrap,
+screen-memory bases, status and received-byte values 0-255, filename lengths
+0-255, handshake combinations, empty/full queues, pointer wrap,
 direct/program VERIFY modes, and NMI injection at every transmit instruction
 boundary. Each original failure is reproduced before its correction is checked.
-The reported case total includes 1,409 ROM-label checks.
+The 2,275 reported cases include 1,409 ROM-label checks. Counts and binary hashes
+are recorded in `verification/`.
 
 Tests execute real ROM instructions using py65 1.2.0. VIA interrupt-enable
 semantics are modelled, and a synthetic NMI wrapper calls the actual ROM consumer.
