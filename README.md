@@ -8,15 +8,22 @@ standard Commodore BASIC V2.
 The patched source builds to a 16 KB image at $C000-$FFFF. All 1,409 existing ROM
 labels, the public KERNAL jump table and hardware vectors retain their addresses.
 Both ROMs are patched. Helpers reuse spare ROM space and obsolete non-timing
-padding. The startup banner reads `* CBM BASIC V2.26 *`. Three trailing
-spaces retain the original 22-byte banner field. The default blue text, white
+padding. The startup banner reads `CBM BASIC V2.26`, starting at column six
+(zero-based). One trailing space retains the original 22-byte banner field.
+The default blue text, white
 background and cyan border are retained.
-An eleven-cell rainbow occupies the top-right three columns over five rows, with
-its flat edge against the right border. The heading is framed by asterisks and
-centred in the 19 columns before the rainbow. It uses existing character-ROM
-glyphs and the VIC-20's red, yellow, green, cyan and blue colours. Text rows,
-columns and the blue typing cursor retain their normal positions. The free-memory
+The left-hand rainbow steps through widths of five, four, three, two and one
+cells over five rows, using fifteen cells and the stock diagonal glyph.
+The heading and memory count are aligned at column six, separated from the
+rainbow by one clear column. READY appears on row six; typing starts on row
+seven (zero-based), below the stripes. It uses the original character ROM and
+native red, yellow, green, cyan and blue. The free-memory
 figure is calculated normally; an unexpanded VIC-20 displays 3583 bytes free.
+
+![Stepped VIC-20 startup screen](docs/startup-screen.png)
+
+This preview is rendered from the ROM's tested startup screen memory, with
+approximate RGB colours and a visible cursor blink phase.
 
 ## Corrections
 
@@ -96,7 +103,9 @@ node scripts/build-variants.mjs --fixes=true --rainbow=false --banner=false
 
 Variant outputs go to `dist/`; the default ROMs in `roms/` are unchanged.
 BASIC/KERNAL fixes stay together because their helpers share ROM space.
-The stock heading's rightmost asterisks are covered when combined with the rainbow.
+Rainbow builds use this aligned layout with either `CBM BASIC V2` or
+`CBM BASIC V2.26`; framing stars are removed to avoid collisions.
+With rainbow and heading disabled, the complete original screen is retained.
 
 ### Canonical Build
 

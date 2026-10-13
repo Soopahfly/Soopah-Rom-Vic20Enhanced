@@ -28,13 +28,18 @@ cases = 0
 for variant in variants:
     rom = base64.b64decode(variant['image'])
     options = variant['options']
-    assert len(rom) == 16384 and rom[-128:] == original[-128:]
+    assert len(rom) == 16384
+    assert rom[0x3F80:0x3F85] == original[0x3F80:0x3F85]
+    assert rom[0x3F8A:] == original[0x3F8A:]
     if not any(options.values()):
         assert rom == original, 'All-off must reproduce production ROMs exactly'
     if all(options.values()):
         assert rom == fixed, 'All-on must reproduce the published enhanced build'
     expected_banner = fixed if options['banner'] else original
-    assert rom[0x2436:0x244F] == expected_banner[0x2436:0x244F]
+    if options['rainbow'] and not options['banner']:
+        assert rom[0x2436:0x244F] == b'\x93      CBM BASIC V2    \r\x00'
+    else:
+        assert rom[0x2436:0x244F] == expected_banner[0x2436:0x244F]
     # Only the screen patches may differ from a same-fixes baseline.
     baseline = next(v for v in variants if v['options'] == {
         'fixes':options['fixes'],'rainbow':False,'banner':options['banner']})
@@ -47,13 +52,42 @@ for variant in variants:
         screen = list(before[base:base+506])
         colours = list(before[colour_base:colour_base+506])
         if options['rainbow']:
+            memory_text = screen[44:60]
+            ready_text = screen[88:94]
+            memory_colours = colours[44:60]
+            ready_colours = colours[88:94]
+            heading = ('CBM BASIC V2.26' if options['banner'] else 'CBM BASIC V2')
+            screen[:22] = [0x20]*22
+            screen[6:6+len(heading)] = [
+                ord(c)-64 if 'A' <= c <= 'Z' else ord(c) for c in heading]
+            screen[44:66] = [0x20]*22
+            screen[50:66] = memory_text
+            screen[88:94] = [0x20]*6
+            screen[132:138] = ready_text
+            colours[44:66] = [1]*22
+            colours[50:66] = memory_colours
+            colours[88:94] = [1]*6
+            colours[132:138] = ready_colours
             for offset,glyph,colour in zip(core['rainbow_offsets'],
                                            core['rainbow_glyphs'],core['rainbow_colours']):
                 screen[offset],colours[offset] = glyph,colour
         assert after[base:base+506] == screen
         assert after[colour_base:colour_base+506] == colours
-        assert [after[i] for i in (0xD1,0xD2,0xD3,0xD6,0x286,0x2B,0x2C,0x37,0x38)] == [
-            before[i] for i in (0xD1,0xD2,0xD3,0xD6,0x286,0x2B,0x2C,0x37,0x38)]
+        assert [after[i] for i in (0x286,0x2B,0x2C,0x37,0x38)] == [
+            before[i] for i in (0x286,0x2B,0x2C,0x37,0x38)]
+        if options['rainbow']:
+            assert after[0xD3] == 0 and after[0xD6] == 7
+            assert (after[0xD1] | after[0xD2]<<8) == base+154
+            assert (after[0xF3] | after[0xF4]<<8) == colour_base+132
+            cpu = core['MPU'](memory=after,pc=0xFFD2)
+            cpu.a,cpu.sp = ord('A'),0xFF
+            cpu.stPushWord(core['RETURN']-1)
+            core['run'](cpu)
+            assert after[base+154] == 1 and after[colour_base+154] == 6
+            assert (after[0xD3],after[0xD6]) == (1,7)
+        else:
+            assert [after[i] for i in (0xD1,0xD2,0xD3,0xD6)] == [
+                before[i] for i in (0xD1,0xD2,0xD3,0xD6)]
         cases += 1
     for value in ('123','1E39','-1E39','1E99'):
         for handler in (0x400,0xC43A):

@@ -9002,7 +9002,7 @@ LAB_E404
 	JSR	LAB_C408		; check available memory, do out of memory error if no room
 	LDA	#<LAB_E436		; set startup banner pointer low byte
 	LDY	#>LAB_E436		; set startup banner pointer high byte
-	JSR	LAB_CB1E		; print null terminated string
+	JSR	FIX_BOOT_HEADING		; print heading and align the following memory count
 	LDA	LAB_37		; get end of memory low byte
 	SEC				; set carry for subtract
 	SBC	LAB_2B		; subtract start of memory low byte
@@ -9021,9 +9021,9 @@ LAB_E404
 LAB_E429
 	.byte	" BYTES FREE",$0D,$00
 LAB_E436
-; Frame the build identifier in the 19 columns before the rainbow. Three padding
-; spaces retain the original 22-byte field and all following ROM addresses.
-	.byte	$93,"* CBM BASIC V2.26 *   ",$0D,$00
+; Six columns leave a five-cell rainbow and one clear column beside the heading.
+; One trailing space retains the original 22-byte field and text-row behaviour.
+	.byte	$93,"      CBM BASIC V2.26 ",$0D,$00
 
 
 ;***********************************************************************************;
@@ -10203,37 +10203,52 @@ LAB_E928
 
 ;***********************************************************************************;
 ;
-; Reuse the unreferenced code-conversion table, retaining the next entry at $E975.
-; A three-column accent leaves the 19-character framed banner and text rows alone.
-; $5F is the stock diagonal with its flat edge on the right; $A0 is a solid block.
-; Use free KERNAL scratch pointers, not the screen editor's cursor or line pointers.
+; Reuse only the unreferenced conversion table, ending at the original $E975.
+; Draw widths 5,4,3,2,1 against the left edge. $69 slopes towards that edge;
+; $A0 fills the stripe. The palette lives in the five spare bytes at $FF85.
 FIX_BOOT_RAINBOW
-	LDA	LAB_0288		; screen base changes when RAM expansion is fitted
+	LDA	LAB_0288
 	STA	$FC
+	AND	#$03
+	ORA	#$94
+	STA	$FE
 	LDY	#$00
 	STY	$FB
 	STY	$FD
-	LDA	$FC
-	AND	#$03
-	ORA	#$94			; derive the matching colour-RAM page
-	STA	$FE
-	LDX	#$0A
-FIX_BOOT_PIXEL
-	LDY	FIX_BOOT_OFFSETS,X
-	LDA	FIX_BOOT_GLYPHS,X
-	STA	($FB),Y
+	LDX	#$04
+FIX_BOOT_ROW
 	LDA	FIX_BOOT_COLOURS,X
+	STA	$FF		; boot-only scratch; leave the IRQ's keyboard pointer untouched
+	TXA
+	PHA			; retain row width while X counts its cells
+FIX_BOOT_PIXEL
+	LDA	#$A0
+	STA	($FB),Y
+	LDA	$FF
 	STA	($FD),Y
+	INY
 	DEX
 	BPL	FIX_BOOT_PIXEL
-	JMP	LAB_C644		; keep the normal NEW/CLEAR/RESTORE startup path
-FIX_BOOT_OFFSETS
-	.byte	19,20,21,41,42,43,64,65,86,87,109
-FIX_BOOT_GLYPHS
-	.byte	$5F,$A0,$A0,$5F,$A0,$A0,$5F,$A0,$5F,$A0,$5F
-FIX_BOOT_COLOURS
-	.byte	2,2,2,7,7,7,5,5,3,3,6	; red, yellow, green, cyan, blue
-	.assert	* <= $E975, error, "Startup rainbow exceeds unused table space"
+	DEY
+	LDA	#$69
+	STA	($FB),Y
+	PLA
+	TAX
+	LDY	FIX_BOOT_NEXT_ROW,X
+	DEX
+	BPL	FIX_BOOT_ROW
+	LDA	#$05
+	STA	LAB_D6		; READY's leading return puts it below the five stripes
+	JSR	LAB_E587	; update editor line pointer; CHROUT calculates colour lazily
+	JMP	LAB_C644
+FIX_BOOT_NEXT_ROW
+	.byte	110,88,66,44,22
+FIX_BOOT_HEADING
+	JSR	LAB_CB1E
+	LDA	#$06		; first digit aligns with heading column six
+	STA	LAB_D3
+	RTS
+	.assert	* <= $E975, error, "Startup layout exceeds unused table space"
 	.res	$E975-*, $FF
 
 
@@ -15429,8 +15444,9 @@ LAB_FF82
 ;
 ; spare bytes, not referenced
 
-;LAB_FF85
-	.byte	$FF,$FF,$FF,$FF,$FF
+; Five unused bytes hold the startup palette, not keyboard or RND seed data.
+FIX_BOOT_COLOURS
+	.byte	6,3,5,7,2		; indexed bottom-to-top: blue, cyan, green, yellow, red
 
 
 ;***********************************************************************************;

@@ -27,11 +27,15 @@
 
 ### Startup Screen
 
-- Display `* CBM BASIC V2.26 *` in the existing 22-byte banner field.
-- Draw a small rainbow in the top-right three columns, flat against the border.
+- Display `CBM BASIC V2.26` at column six within the original 22-byte field.
+- Draw a left-edge stepped rainbow, narrowing from five cells to one over five rows.
+- Align the memory count with the heading and remove the framing asterisks.
+- Put READY on row six and the typing cursor on row seven, below the stripes.
 - Use the existing character ROM and native red, yellow, green, cyan and blue.
 - Retain the blue text, white background, cyan border and normal typing cursor.
-- Preserve text rows and columns, dynamic free-memory output and ROM addresses.
+- Preserve dynamic free-memory output, original font and all ROM addresses.
+- Keep complete stock-screen builds available when both screen switches are off.
+- Render the preview from ROM-generated screen memory, not hand-positioned text.
 
 ### Scope And Verification
 

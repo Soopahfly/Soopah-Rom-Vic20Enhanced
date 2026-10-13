@@ -15,7 +15,7 @@ on:
         type: boolean
         default: true
       rainbow:
-        description: Include the right-hand rainbow
+        description: Include the left-hand stepped rainbow and aligned layout
         type: boolean
         default: true
       banner:

@@ -38,10 +38,18 @@ speed promises. Short strings and fragmented heaps may gain little or incur over
 
 ## Screen
 
-The top-right rainbow uses eleven cells, existing character-ROM glyphs and
-native red, yellow, green, cyan and blue. Blue text, white background, cyan
-border and the normal blue cursor remain. The V2.26 heading fits the original
-22-byte field. Both choices are independent of fixes.
+The left-edge rainbow steps through widths five, four, three, two and one over
+five rows, using fifteen cells and stock character-ROM glyphs. Colours remain
+native red, yellow, green, cyan and blue, with blue text, white background and
+cyan border. The unframed heading and memory count align at column six.
+READY is on row six; typing starts on row seven below the stripes (zero-based).
+The heading still fits its original 22-byte field.
+
+The rainbow selects the aligned layout; the heading switch chooses V2 or V2.26
+wording. Both switches remain independent of fixes. Disabling both screen
+switches retains the entire original screen.
+
+![ROM-generated startup preview](https://raw.githubusercontent.com/Soopahfly/Soopah-Rom-Vic20Enhanced/main/docs/startup-screen.png)
 
 Free memory is calculated normally. V2.26 is a build identifier, not a new
 BASIC language or token set.

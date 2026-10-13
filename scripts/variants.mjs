@@ -8,7 +8,7 @@ export const features = {
     [0xe65b,0xe672], [0xe800,0xe815], [0xebed,0xec00], [0xec18,0xec38],
     [0xeff5,0xeff6], [0xf0ed,0xf102], [0xf26f,0xf279], [0xf513,0xf514],
     [0xf822,0xf834], [0xfe5d,0xfe66]],
-  rainbow: [[0xe426,0xe429], [0xe929,0xe975]],
+  rainbow: [[0xe40f,0xe412], [0xe426,0xe429], [0xe929,0xe975], [0xff85,0xff8a]],
   banner: [[0xe437,0xe44d]],
 };
 export const hash = data => crypto.createHash('sha256').update(data).digest('hex');
@@ -37,6 +37,11 @@ export function compose(original, assembled, options) {
       throw new Error(`Unclassified assembled change at $${(0xc000+i).toString(16)}`);
     }
     if (owner && options[owner]) result[i] = assembled[i];
+  }
+  // The rainbow selects the aligned layout. "Banner off" retains stock wording,
+  // without framing stars that would collide with the left-hand stripes.
+  if (options.rainbow && !options.banner) {
+    result.write('      CBM BASIC V2'.padEnd(22), 0x2437, 'ascii');
   }
   return result;
 }

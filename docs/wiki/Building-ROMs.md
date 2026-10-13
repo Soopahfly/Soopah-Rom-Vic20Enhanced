@@ -18,13 +18,14 @@ automatically produce all eight combinations.
 | Switch | On | Off |
 | --- | --- | --- |
 | Fixes | Six KERNAL fixes and both BASIC changes | Original behaviour, including bugs |
-| Rainbow | Eleven-cell right-hand rainbow | No rainbow |
-| Heading | `* CBM BASIC V2.26 *` | Original Commodore heading |
+| Rainbow | Left-hand stepped rainbow and aligned layout | Stock layout |
+| Heading | `CBM BASIC V2.26` | `CBM BASIC V2` wording |
 
 BASIC/KERNAL fixes stay together because their helper code shares ROM space.
-The heading is cosmetic and does not enable fixes. With a stock heading and
-rainbow, the rightmost asterisks are covered; other text rows and cursor retain
-their positions.
+The heading is cosmetic and does not enable fixes. Rainbow builds remove framing
+asterisks and align the heading and memory count at column six. READY is on
+row six and typing starts on row seven, below the stripes (zero-based).
+With both screen choices disabled, the complete original heading/layout remain.
 
 ## All Combinations
 

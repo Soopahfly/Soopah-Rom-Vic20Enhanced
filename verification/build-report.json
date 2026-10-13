@@ -1,8 +1,8 @@
 {
   "bytes": 16384,
-  "changedBytes": 359,
+  "changedBytes": 370,
   "preservedLabels": 1409,
-  "sha256": "438ce68250320b4d3499004034dc92364b926ed6e70a243f332848618adc018b",
+  "sha256": "a11a094b5f8e0ce7a4a51ecda4ca778630be16c72806bc3d7ef91e3f714e37cd",
   "publishedRomsMatch": true,
   "differences": [
     {
@@ -256,6 +256,16 @@
       "patched": 208
     },
     {
+      "address": "$E410",
+      "original": 30,
+      "patched": 107
+    },
+    {
+      "address": "$E411",
+      "original": 203,
+      "patched": 233
+    },
+    {
       "address": "$E427",
       "original": 68,
       "patched": 41
@@ -266,6 +276,11 @@
       "patched": 233
     },
     {
+      "address": "$E437",
+      "original": 42,
+      "patched": 32
+    },
+    {
       "address": "$E438",
       "original": 42,
       "patched": 32
@@ -273,17 +288,12 @@
     {
       "address": "$E439",
       "original": 42,
-      "patched": 67
+      "patched": 32
     },
     {
       "address": "$E43A",
       "original": 42,
-      "patched": 66
-    },
-    {
-      "address": "$E43B",
-      "original": 32,
-      "patched": 77
+      "patched": 32
     },
     {
       "address": "$E43C",
@@ -291,64 +301,79 @@
       "patched": 32
     },
     {
+      "address": "$E43D",
+      "original": 66,
+      "patched": 67
+    },
+    {
       "address": "$E43E",
       "original": 77,
-      "patched": 65
+      "patched": 66
     },
     {
       "address": "$E43F",
       "original": 32,
-      "patched": 83
+      "patched": 77
     },
     {
       "address": "$E440",
       "original": 66,
-      "patched": 73
+      "patched": 32
     },
     {
       "address": "$E441",
       "original": 65,
-      "patched": 67
+      "patched": 66
     },
     {
       "address": "$E442",
       "original": 83,
-      "patched": 32
+      "patched": 65
     },
     {
       "address": "$E443",
       "original": 73,
-      "patched": 86
+      "patched": 83
     },
     {
       "address": "$E444",
       "original": 67,
-      "patched": 50
+      "patched": 73
     },
     {
       "address": "$E445",
       "original": 32,
-      "patched": 46
+      "patched": 67
     },
     {
       "address": "$E446",
       "original": 86,
-      "patched": 50
+      "patched": 32
     },
     {
       "address": "$E447",
       "original": 50,
-      "patched": 54
+      "patched": 86
+    },
+    {
+      "address": "$E448",
+      "original": 32,
+      "patched": 50
+    },
+    {
+      "address": "$E449",
+      "original": 42,
+      "patched": 46
     },
     {
       "address": "$E44A",
       "original": 42,
-      "patched": 32
+      "patched": 50
     },
     {
       "address": "$E44B",
       "original": 42,
-      "patched": 32
+      "patched": 54
     },
     {
       "address": "$E44C",
@@ -928,132 +953,137 @@
     {
       "address": "$E92E",
       "original": 177,
-      "patched": 160
+      "patched": 41
     },
     {
       "address": "$E92F",
       "original": 226,
-      "patched": 0
+      "patched": 3
     },
     {
       "address": "$E930",
       "original": 178,
-      "patched": 132
+      "patched": 9
     },
     {
       "address": "$E931",
       "original": 227,
-      "patched": 251
+      "patched": 148
     },
     {
       "address": "$E932",
       "original": 179,
-      "patched": 132
+      "patched": 133
     },
     {
       "address": "$E933",
       "original": 228,
-      "patched": 253
+      "patched": 254
     },
     {
       "address": "$E934",
       "original": 180,
-      "patched": 165
+      "patched": 160
     },
     {
       "address": "$E935",
       "original": 229,
-      "patched": 252
+      "patched": 0
     },
     {
       "address": "$E936",
       "original": 181,
-      "patched": 41
+      "patched": 132
     },
     {
       "address": "$E937",
       "original": 230,
-      "patched": 3
+      "patched": 251
     },
     {
       "address": "$E938",
       "original": 182,
-      "patched": 9
+      "patched": 132
     },
     {
       "address": "$E939",
       "original": 231,
-      "patched": 148
+      "patched": 253
     },
     {
       "address": "$E93A",
       "original": 183,
-      "patched": 133
+      "patched": 162
     },
     {
       "address": "$E93B",
       "original": 232,
-      "patched": 254
+      "patched": 4
     },
     {
       "address": "$E93C",
       "original": 184,
-      "patched": 162
+      "patched": 189
     },
     {
       "address": "$E93D",
       "original": 233,
-      "patched": 10
+      "patched": 133
     },
     {
       "address": "$E93E",
       "original": 185,
-      "patched": 188
+      "patched": 255
     },
     {
       "address": "$E93F",
       "original": 250,
-      "patched": 81
+      "patched": 133
     },
     {
       "address": "$E940",
       "original": 186,
-      "patched": 233
+      "patched": 255
     },
     {
       "address": "$E941",
       "original": 251,
-      "patched": 189
+      "patched": 138
     },
     {
       "address": "$E942",
       "original": 187,
-      "patched": 92
+      "patched": 72
     },
     {
       "address": "$E943",
       "original": 252,
-      "patched": 233
+      "patched": 169
     },
     {
       "address": "$E944",
       "original": 188,
-      "patched": 145
+      "patched": 160
     },
     {
       "address": "$E945",
       "original": 236,
+      "patched": 145
+    },
+    {
+      "address": "$E946",
+      "original": 189,
       "patched": 251
     },
     {
       "address": "$E947",
       "original": 254,
-      "patched": 103
+      "patched": 165
     },
     {
       "address": "$E948",
       "original": 190,
-      "patched": 233
+      "patched": 255
     },
     {
       "address": "$E949",
@@ -1068,202 +1098,202 @@
     {
       "address": "$E94B",
       "original": 247,
-      "patched": 202
+      "patched": 200
     },
     {
       "address": "$E94C",
       "original": 192,
-      "patched": 16
+      "patched": 202
     },
     {
       "address": "$E94D",
       "original": 248,
-      "patched": 240
+      "patched": 16
     },
     {
       "address": "$E94E",
       "original": 219,
-      "patched": 76
+      "patched": 244
     },
     {
       "address": "$E94F",
       "original": 249,
-      "patched": 68
+      "patched": 136
     },
     {
       "address": "$E950",
       "original": 221,
-      "patched": 198
+      "patched": 169
     },
     {
       "address": "$E951",
       "original": 234,
-      "patched": 19
+      "patched": 105
     },
     {
       "address": "$E952",
       "original": 222,
-      "patched": 20
+      "patched": 145
     },
     {
       "address": "$E953",
       "original": 94,
-      "patched": 21
+      "patched": 251
     },
     {
       "address": "$E954",
       "original": 224,
-      "patched": 41
+      "patched": 104
     },
     {
       "address": "$E955",
       "original": 91,
-      "patched": 42
+      "patched": 170
     },
     {
       "address": "$E956",
       "original": 225,
-      "patched": 43
+      "patched": 188
     },
     {
       "address": "$E957",
       "original": 93,
-      "patched": 64
+      "patched": 102
     },
     {
       "address": "$E958",
       "original": 226,
-      "patched": 65
+      "patched": 233
     },
     {
       "address": "$E959",
       "original": 64,
-      "patched": 86
+      "patched": 202
     },
     {
       "address": "$E95A",
       "original": 176,
-      "patched": 87
+      "patched": 16
     },
     {
       "address": "$E95B",
       "original": 97,
-      "patched": 109
+      "patched": 224
     },
     {
       "address": "$E95C",
       "original": 177,
-      "patched": 95
+      "patched": 169
     },
     {
       "address": "$E95D",
       "original": 120,
-      "patched": 160
+      "patched": 5
     },
     {
       "address": "$E95E",
       "original": 219,
-      "patched": 160
+      "patched": 133
     },
     {
       "address": "$E95F",
       "original": 121,
-      "patched": 95
+      "patched": 214
     },
     {
       "address": "$E960",
       "original": 221,
-      "patched": 160
+      "patched": 32
     },
     {
       "address": "$E961",
       "original": 102,
-      "patched": 160
+      "patched": 135
     },
     {
       "address": "$E962",
       "original": 182,
-      "patched": 95
+      "patched": 229
     },
     {
       "address": "$E963",
       "original": 119,
-      "patched": 160
+      "patched": 76
     },
     {
       "address": "$E964",
       "original": 192,
-      "patched": 95
+      "patched": 68
     },
     {
       "address": "$E965",
       "original": 112,
-      "patched": 160
+      "patched": 198
     },
     {
       "address": "$E966",
       "original": 240,
-      "patched": 95
+      "patched": 110
     },
     {
       "address": "$E967",
       "original": 113,
-      "patched": 2
+      "patched": 88
     },
     {
       "address": "$E968",
       "original": 241,
-      "patched": 2
+      "patched": 66
     },
     {
       "address": "$E969",
       "original": 114,
-      "patched": 2
+      "patched": 44
     },
     {
       "address": "$E96A",
       "original": 242,
-      "patched": 7
+      "patched": 22
     },
     {
       "address": "$E96B",
       "original": 115,
-      "patched": 7
+      "patched": 32
     },
     {
       "address": "$E96C",
       "original": 243,
-      "patched": 7
+      "patched": 30
     },
     {
       "address": "$E96D",
       "original": 116,
-      "patched": 5
+      "patched": 203
     },
     {
       "address": "$E96E",
       "original": 244,
-      "patched": 5
+      "patched": 169
     },
     {
       "address": "$E96F",
       "original": 117,
-      "patched": 3
+      "patched": 6
     },
     {
       "address": "$E970",
       "original": 245,
-      "patched": 3
+      "patched": 133
     },
     {
       "address": "$E971",
       "original": 118,
-      "patched": 6
+      "patched": 211
     },
     {
       "address": "$E972",
       "original": 246,
-      "patched": 255
+      "patched": 96
     },
     {
       "address": "$E973",
@@ -1799,6 +1829,31 @@
       "address": "$FE65",
       "original": 96,
       "patched": 234
+    },
+    {
+      "address": "$FF85",
+      "original": 255,
+      "patched": 6
+    },
+    {
+      "address": "$FF86",
+      "original": 255,
+      "patched": 3
+    },
+    {
+      "address": "$FF87",
+      "original": 255,
+      "patched": 5
+    },
+    {
+      "address": "$FF88",
+      "original": 255,
+      "patched": 7
+    },
+    {
+      "address": "$FF89",
+      "original": 255,
+      "patched": 2
     }
   ]
 }

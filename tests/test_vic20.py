@@ -71,15 +71,17 @@ for line in (PATCHED / 'vic20-fixed.labels').read_text().splitlines():
             assert int(fields[1], 16) == expected, line
             label_count += 1
 assert label_count > 500
-assert FIXED[-128:] == ORIGINAL[-128:], 'KERNAL public jump table or vectors changed'
+assert FIXED[0x3F80:0x3F85] == ORIGINAL[0x3F80:0x3F85]
+assert FIXED[0x3F8A:] == ORIGINAL[0x3F8A:], 'KERNAL public jump table or vectors changed'
+assert FIXED[0x239F:0x23A4] == ORIGINAL[0x239F:0x23A4], 'Initial RND seed changed'
 record('ROM labels, public jump table and hardware vectors preserved', label_count)
 
-assert FIXED[0x2436:0x244F] == b'\x93* CBM BASIC V2.26 *   \r\x00', 'Wrong startup banner'
+assert FIXED[0x2436:0x244F] == b'\x93      CBM BASIC V2.26 \r\x00', 'Wrong startup banner'
 record('V2.26 startup banner fits the original 22-column field', 1)
 
-rainbow_offsets = [19,20,21,41,42,43,64,65,86,87,109]
-rainbow_glyphs = [0x5F,0xA0,0xA0,0x5F,0xA0,0xA0,0x5F,0xA0,0x5F,0xA0,0x5F]
-rainbow_colours = [2,2,2,7,7,7,5,5,3,3,6]
+rainbow_offsets = [0,1,2,3,4,22,23,24,25,44,45,46,66,67,88]
+rainbow_glyphs = [0xA0,0xA0,0xA0,0xA0,0x69,0xA0,0xA0,0xA0,0x69,0xA0,0xA0,0x69,0xA0,0x69,0x69]
+rainbow_colours = [2,2,2,2,2,7,7,7,7,5,5,5,3,3,6]
 assert FIXED[0x2426:0x2429] == bytes([0x4C,0x29,0xE9]), 'Missing startup hook'
 for screen_base in (0x1000, 0x1E00):
     cpu, mem = machine(entry=0xE929)
@@ -88,18 +90,27 @@ for screen_base in (0x1000, 0x1E00):
     mem[screen_base:screen_base+506] = [0x20] * 506
     mem[colour_base:colour_base+506] = [6] * 506
     mem[0xD3], mem[0xD6], mem[0x286] = 0, 3, 6
+    for row in range(24):
+        mem[0xD9+row] = 0x80 | ((row*22) >> 8)
     expected_screen = list(mem[screen_base:screen_base+506])
     expected_colours = list(mem[colour_base:colour_base+506])
     for offset, glyph_value, colour in zip(rainbow_offsets, rainbow_glyphs, rainbow_colours):
-        assert offset % 22 >= 19 and offset // 22 < 5
+        assert offset % 22 < 5 and offset // 22 < 5
         expected_screen[offset] = glyph_value
         expected_colours[offset] = colour
-    run(cpu, stops=(0xC644,))
+    # An IRQ keyboard scan can update F5/F6 between any drawing instructions.
+    for _ in range(20000):
+        if cpu.pc == 0xC644:
+            break
+        mem[0xF5], mem[0xF6] = 0x9F,0xEC
+        cpu.step()
+    else:
+        raise AssertionError('Startup drawing did not finish')
     assert mem[screen_base:screen_base+506] == expected_screen
     assert mem[colour_base:colour_base+506] == expected_colours
-    assert (mem[0xD3], mem[0xD6], mem[0x286]) == (0,3,6)
+    assert (mem[0xD3], mem[0xD6], mem[0x286]) == (0,5,6)
     assert cpu.sp == 0xFD, 'Startup helper altered the return stack'
-record('Right-hand rainbow cells, colours and editor state on both screen bases', 2)
+record('Left-hand stepped rainbow and editor pointers on both screen bases', 2)
 
 class BootMemory(Memory):
     """Only the VIC RAM map and static I/O; no video or interrupt timing."""
@@ -130,8 +141,10 @@ def boot_to_input(rom, expanded):
 
 
 without_rainbow = bytearray(FIXED)
+without_rainbow[0x240F:0x2412] = ORIGINAL[0x240F:0x2412]
 without_rainbow[0x2426:0x2429] = ORIGINAL[0x2426:0x2429]
 without_rainbow[0x2929:0x2975] = ORIGINAL[0x2929:0x2975]
+without_rainbow[0x3F85:0x3F8A] = ORIGINAL[0x3F85:0x3F8A]
 for expanded in (False, True):
     baseline, base = boot_to_input(without_rainbow, expanded)
     decorated, decorated_base = boot_to_input(FIXED, expanded)
@@ -139,13 +152,36 @@ for expanded in (False, True):
     colour_base = 0x9400 | (base & 0x300)
     expected_screen = list(baseline[base:base+506])
     expected_colours = list(baseline[colour_base:colour_base+506])
+    memory_text = expected_screen[44:60]
+    ready_text = expected_screen[88:94]
+    memory_colours = expected_colours[44:60]
+    ready_colours = expected_colours[88:94]
+    expected_screen[44:66] = [0x20]*22
+    expected_screen[50:66] = memory_text
+    expected_screen[88:94] = [0x20]*6
+    expected_screen[132:138] = ready_text
+    expected_colours[44:66] = [1]*22
+    expected_colours[50:66] = memory_colours
+    expected_colours[88:94] = [1]*6
+    expected_colours[132:138] = ready_colours
     for offset, glyph_value, colour in zip(rainbow_offsets, rainbow_glyphs, rainbow_colours):
         expected_screen[offset] = glyph_value
         expected_colours[offset] = colour
     assert decorated[base:base+506] == expected_screen, 'Startup text or logo differs'
     assert decorated[colour_base:colour_base+506] == expected_colours
-    assert [decorated[i] for i in (0xD1,0xD2,0xD3,0xD6,0x286)] == [baseline[i] for i in (0xD1,0xD2,0xD3,0xD6,0x286)]
-record('Reset-to-input instruction path preserves text and cursor with/without RAM expansion', 2)
+    assert decorated[0xD3] == 0 and decorated[0xD6] == 7
+    assert (decorated[0xD1] | decorated[0xD2]<<8) == base+154
+    assert (decorated[0xF3] | decorated[0xF4]<<8) == colour_base+132
+    assert decorated[0x286] == baseline[0x286] == 6
+    assert decorated[0x2B:0x39] == baseline[0x2B:0x39], 'BASIC memory pointers changed'
+    # Colour pointers are lazy on stock ROMs too: the next output must refresh them.
+    cpu = MPU(memory=decorated, pc=0xFFD2)
+    cpu.a, cpu.sp = ord('A'), 0xFF
+    cpu.stPushWord(RETURN-1)
+    run(cpu)
+    assert decorated[base+154] == 1 and decorated[colour_base+154] == 6
+    assert (decorated[0xD3], decorated[0xD6]) == (1,7)
+record('Aligned startup text and clear typing area with/without RAM expansion', 2)
 
 # Status values survive read-and-clear; register and stack contracts are retained.
 for value in range(256):

@@ -15,12 +15,12 @@
       "passed": true
     },
     {
-      "test": "Right-hand rainbow cells, colours and editor state on both screen bases",
+      "test": "Left-hand stepped rainbow and editor pointers on both screen bases",
       "cases": 2,
       "passed": true
     },
     {
-      "test": "Reset-to-input instruction path preserves text and cursor with/without RAM expansion",
+      "test": "Aligned startup text and clear typing area with/without RAM expansion",
       "cases": 2,
       "passed": true
     },
