@@ -18,6 +18,26 @@ the original design.
 
 ## Build And Preview
 
+### Individual Screen Previews
+
+These images render ROM-produced screen RAM, not captured VICE screenshots.
+
+**Stock**
+
+![Stock CHARGEN startup screen](chargen/stock.png)
+
+**Clean 5x7**
+
+![Clean 5x7 CHARGEN startup screen](chargen/clean-5x7.png)
+
+**Compact 5x6**
+
+![Compact 5x6 CHARGEN startup screen](chargen/compact-5x6.png)
+
+[Side-by-side comparison](chargen-comparison.png)
+
+### Rebuilding
+
 The stock 901460-03 image is included as `reference/characters.901460-03.bin`,
 from <https://www.zimmers.net/anonftp/pub/cbm/firmware/characters/vic20.bin>.
 Its SHA256 is `bda280726cfe069ca70ef5e2f2d95a29f69d3950c859a12e6979464963fcf502`.
