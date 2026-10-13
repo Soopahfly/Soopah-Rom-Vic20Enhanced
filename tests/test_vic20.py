@@ -74,7 +74,7 @@ assert label_count > 500
 assert FIXED[-128:] == ORIGINAL[-128:], 'KERNAL public jump table or vectors changed'
 record('ROM labels, public jump table and hardware vectors preserved', label_count)
 
-assert FIXED[0x2436:0x244F] == b'\x93CBM BASIC V2 - 26     \r\x00', 'Wrong startup banner'
+assert FIXED[0x2436:0x244F] == b'\x93*CBM BASIC V2 - 26*   \r\x00', 'Wrong startup banner'
 record('26 startup banner fits the original 22-column field', 1)
 
 rainbow_offsets = [19,20,21,41,42,43,64,65,86,87,109]

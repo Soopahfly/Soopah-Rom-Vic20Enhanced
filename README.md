@@ -6,10 +6,11 @@ Commented, address-preserving corrections for the Commodore VIC-20 PAL KERNAL
 The patched source builds to a 16 KB image at $C000-$FFFF. All 1,409 existing ROM
 labels, the public KERNAL jump table and hardware vectors retain their addresses.
 The BASIC ROM is unchanged. The patched KERNAL includes helper routines in existing
-spare ROM space and a startup banner reading `CBM BASIC V2 - 26`. Five trailing
+spare ROM space and a startup banner reading `*CBM BASIC V2 - 26*`. Three trailing
 spaces retain the original 22-byte banner field. Colours are unchanged.
 An eleven-cell rainbow occupies the top-right three columns over five rows, with
-its flat edge against the right border. It uses existing character-ROM glyphs and
+its flat edge against the right border. The heading is framed by asterisks and
+centred in the 19 columns before the rainbow. It uses existing character-ROM glyphs and
 the VIC-20's red, yellow, green, cyan and blue colours. Text rows, columns and the
 blue typing cursor retain their normal positions.
 

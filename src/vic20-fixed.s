@@ -8999,7 +8999,7 @@ LAB_E429
 	.byte	" BYTES FREE",$0D,$00
 LAB_E436
 ; Pad to the original 22 bytes to preserve the following ROM addresses.
-	.byte	$93,"CBM BASIC V2 - 26     ",$0D,$00
+	.byte	$93,"*CBM BASIC V2 - 26*   ",$0D,$00
 
 
 ;***********************************************************************************;
@@ -10190,7 +10190,7 @@ LAB_E928
 ;***********************************************************************************;
 ;
 ; Reuse the unreferenced code-conversion table, retaining the next entry at $E975.
-; A three-column accent leaves the 17-character banner and original text rows alone.
+; A three-column accent leaves the 19-character framed banner and text rows alone.
 ; $5F is the stock diagonal with its flat edge on the right; $A0 is a solid block.
 ; Use free KERNAL scratch pointers, not the screen editor's cursor or line pointers.
 FIX_BOOT_RAINBOW
