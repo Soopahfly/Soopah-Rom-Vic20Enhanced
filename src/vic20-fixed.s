@@ -8999,7 +8999,7 @@ LAB_E429
 	.byte	" BYTES FREE",$0D,$00
 LAB_E436
 ; Pad to the original 22 bytes to preserve the following ROM addresses.
-	.byte	$93,"*CBM BASIC V2 - 26*   ",$0D,$00
+	.byte	$93,"* CBM BASIC V2.26 *   ",$0D,$00
 
 
 ;***********************************************************************************;

@@ -10,7 +10,7 @@
       "passed": true
     },
     {
-      "test": "26 startup banner fits the original 22-column field",
+      "test": "V2.26 startup banner fits the original 22-column field",
       "cases": 1,
       "passed": true
     },
