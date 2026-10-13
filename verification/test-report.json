@@ -1,0 +1,47 @@
+{
+  "emulator": "py65 1.2.0, NMOS 6502",
+  "scope": "Focused ROM-routine tests; VIA IER semantics modelled; no full VIC-20 peripheral emulation",
+  "testGroups": 7,
+  "cases": 2270,
+  "results": [
+    {
+      "test": "ROM labels, public jump table and hardware vectors preserved",
+      "cases": 1409,
+      "passed": true
+    },
+    {
+      "test": "RS-232 status values, other devices and original-bug reproduction",
+      "cases": 262,
+      "passed": true
+    },
+    {
+      "test": "Transmit/open handshake inputs and original-bug reproduction",
+      "cases": 34,
+      "passed": true
+    },
+    {
+      "test": "Every tape filename length 0-255, guards and original-bug reproduction",
+      "cases": 257,
+      "passed": true
+    },
+    {
+      "test": "Every receive byte, wraparound, empty-queue wait and original-bug reproduction",
+      "cases": 258,
+      "passed": true
+    },
+    {
+      "test": "VERIFY direct/program modes and original-bug reproduction",
+      "cases": 21,
+      "passed": true
+    },
+    {
+      "test": "NMI at every transmit instruction boundary, queue wrap and original-race reproduction",
+      "cases": 29,
+      "passed": true
+    }
+  ],
+  "limitations": [
+    "No full-machine boot test",
+    "No PAL/NTSC hardware or real tape/RS-232 tests"
+  ]
+}

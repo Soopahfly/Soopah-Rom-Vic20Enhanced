@@ -1,0 +1,6 @@
+* text=auto eol=lf
+*.bin -text
+# Retain the downloaded reference exactly, including original whitespace.
+reference/vic20_rom_disassembly.txt -text whitespace=-blank-at-eol
+# The derivative retains historical annotation formatting.
+src/vic20-fixed.s text eol=lf whitespace=-blank-at-eol

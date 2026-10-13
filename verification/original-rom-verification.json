@@ -1,0 +1,27 @@
+{
+  "sourceSha256": "85be772db3eb94cf4a778c12238d0cb49061f4322284e7fe17c931995adba583",
+  "adaptations": [
+    "Removed .END directive for ca65; enabled labels_without_colons"
+  ],
+  "rebuiltBytes": 16384,
+  "comparisons": [
+    {
+      "name": "basic.901486-01.bin",
+      "bytes": 8192,
+      "matches": true,
+      "differenceCount": 0,
+      "referenceSha256": "8be2d882e0eeb1c6923a43660236ea69d43ca8a3bd0613b1b6c910601584fbed",
+      "rebuiltSha256": "8be2d882e0eeb1c6923a43660236ea69d43ca8a3bd0613b1b6c910601584fbed",
+      "differences": []
+    },
+    {
+      "name": "kernal.901486-07.bin",
+      "bytes": 8192,
+      "matches": true,
+      "differenceCount": 0,
+      "referenceSha256": "ff6d1416b91a71f5240a5bb8adc9fdc1b955374c48322ca47b3e436334f168fb",
+      "rebuiltSha256": "ff6d1416b91a71f5240a5bb8adc9fdc1b955374c48322ca47b3e436334f168fb",
+      "differences": []
+    }
+  ]
+}
