@@ -73,6 +73,33 @@ call helpers in the patched KERNAL. Keep the original character ROM.
 
 ## Build And Test
 
+### Selectable GitHub Actions Builds
+
+Open [Build VIC-20 ROMs](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/actions/workflows/build-roms.yml)
+and select **Run workflow**. Independently choose the fix bundle, rainbow and
+V2.26 heading, or build all eight combinations. For fixes with a completely stock
+screen, enable fixes and disable both screen choices. Everything off reproduces
+production ROMs exactly. Automatic builds produce every combination.
+
+Download the successful run's ROM artifact. Each labelled folder contains both
+8 KB images, the combined image, a manifest and checksums. Keep the two images
+from the same folder together. Artifacts expire after 90 days.
+
+See [build choices](docs/wiki/Building-ROMs.md) and
+[patch notes](docs/wiki/Patch-Notes.md), also prepared for the GitHub wiki.
+
+```sh
+node scripts/build-variants.mjs --all
+python tests/test_variants.py
+node scripts/build-variants.mjs --fixes=true --rainbow=false --banner=false
+```
+
+Variant outputs go to `dist/`; the default ROMs in `roms/` are unchanged.
+BASIC/KERNAL fixes stay together because their helpers share ROM space.
+The stock heading's rightmost asterisks are covered when combined with the rainbow.
+
+### Canonical Build
+
 Install Node.js, Python and the cc65 assembler toolchain. Make `ca65` and `ld65`
 available on PATH, or set the `CA65` and `LD65` environment variables to their
 executable paths. From the repository root:

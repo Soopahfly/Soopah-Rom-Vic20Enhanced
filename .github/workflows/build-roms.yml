@@ -1,0 +1,74 @@
+name: Build VIC-20 ROMs
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      all_variants:
+        description: Build all eight combinations (overrides choices below)
+        type: boolean
+        default: false
+      fixes:
+        description: Include BASIC and KERNAL bug fixes
+        type: boolean
+        default: true
+      rainbow:
+        description: Include the right-hand rainbow
+        type: boolean
+        default: true
+      banner:
+        description: Use the V2.26 heading instead of the original heading
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install assembler and test emulator
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes cc65
+          python -m pip install -r requirements-test.txt
+      - name: Build requested ROM combinations
+        env:
+          EVENT: ${{ github.event_name }}
+          ALL_VARIANTS: ${{ inputs.all_variants }}
+          FIXES: ${{ inputs.fixes }}
+          RAINBOW: ${{ inputs.rainbow }}
+          BANNER: ${{ inputs.banner }}
+        run: |
+          if [ "$EVENT" != "workflow_dispatch" ] || [ "$ALL_VARIANTS" = "true" ]; then
+            node scripts/build-variants.mjs --all
+          else
+            node scripts/build-variants.mjs "--fixes=$FIXES" "--rainbow=$RAINBOW" "--banner=$BANNER"
+          fi
+      - name: Verify canonical ROM and every combination
+        run: python tests/test_variants.py
+      - name: Upload ROM images, manifests and checksums
+        uses: actions/upload-artifact@v4
+        with:
+          name: vic20-pal-roms-${{ github.run_number }}
+          path: dist/
+          if-no-files-found: error
+          retention-days: 90
+      - name: Upload verification reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: vic20-verification-${{ github.run_number }}
+          path: verification/
+          if-no-files-found: error
+          retention-days: 90

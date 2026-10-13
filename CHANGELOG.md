@@ -2,6 +2,15 @@
 
 ## V2.26 - 2026-10-13
 
+### Selectable Builds And Wiki
+
+- Add GitHub Actions switches for fixes, rainbow and the V2.26 heading.
+- Support every combination, including exact stock ROMs and fixes on a stock screen.
+- Build all eight variants automatically; allow one selection or all on manual runs.
+- Supply labelled BASIC/KERNAL pairs, combined images, manifests and SHA-256 sums.
+- Test each combination and verify requested download contents before upload.
+- Add wiki pages covering build choices, patch notes and compatibility limits.
+
 ### ROM Corrections
 
 - Limit cassette filenames to the 187-character capacity of the header buffer.

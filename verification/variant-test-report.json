@@ -1,0 +1,10 @@
+{
+  "allPassed": true,
+  "variants": 8,
+  "variantCases": 136,
+  "canonicalCoreCases": 2275,
+  "canonicalBasicCases": 192,
+  "limits": [
+    "Static I/O boot path, not full-machine timing or hardware validation"
+  ]
+}
