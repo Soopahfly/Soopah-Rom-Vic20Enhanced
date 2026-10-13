@@ -1,4 +1,4 @@
-- [Home](Home)
-- [Building ROMs](Building-ROMs)
-- [Patch Notes](Patch-Notes)
-- [Compatibility And Testing](Compatibility-And-Testing)
+- [Home](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/wiki)
+- [Building ROMs](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/wiki/Building-ROMs)
+- [Patch Notes](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/wiki/Patch-Notes)
+- [Compatibility And Testing](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/wiki/Compatibility-And-Testing)
