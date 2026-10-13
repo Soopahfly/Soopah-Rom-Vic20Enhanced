@@ -8977,8 +8977,8 @@ LAB_E404
 	LDA	LAB_2B		; get start of memory low byte
 	LDY	LAB_2C		; get start of memory high byte
 	JSR	LAB_C408		; check available memory, do out of memory error if no room
-	LDA	#<LAB_E436		; set "**** CBM BASIC V2 ****" pointer low byte
-	LDY	#>LAB_E436		; set "**** CBM BASIC V2 ****" pointer high byte
+	LDA	#<LAB_E436		; set startup banner pointer low byte
+	LDY	#>LAB_E436		; set startup banner pointer high byte
 	JSR	LAB_CB1E		; print null terminated string
 	LDA	LAB_37		; get end of memory low byte
 	SEC				; set carry for subtract
@@ -8998,7 +8998,8 @@ LAB_E404
 LAB_E429
 	.byte	" BYTES FREE",$0D,$00
 LAB_E436
-	.byte	$93,"**** CBM BASIC V2 ****",$0D,$00
+; Pad to the original 22 bytes to preserve the following ROM addresses.
+	.byte	$93,"CBM BASIC V2 - 2026   ",$0D,$00
 
 
 ;***********************************************************************************;

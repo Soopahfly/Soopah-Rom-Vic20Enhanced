@@ -36,8 +36,8 @@ const original = Buffer.concat([
   fs.readFileSync(path.join(root, 'reference/kernal.901486-07.bin')),
 ]);
 if (original.length !== 16384) throw new Error('Wrong reference ROM sizes');
-// Restrict changes to the six corrections and their existing spare ROM areas.
-const allowed = [[0xe188,0xe189], [0xe18b,0xe18c], [0xe47c,0xe4a0], [0xe4da,0xe500], [0xeff5,0xeff6], [0xf0ed,0xf102], [0xf26f,0xf279], [0xf513,0xf514], [0xf822,0xf834], [0xfe5d,0xfe66]];
+// Restrict changes to the six corrections, spare areas and startup banner.
+const allowed = [[0xe188,0xe189], [0xe18b,0xe18c], [0xe437,0xe44d], [0xe47c,0xe4a0], [0xe4da,0xe500], [0xeff5,0xeff6], [0xf0ed,0xf102], [0xf26f,0xf279], [0xf513,0xf514], [0xf822,0xf834], [0xfe5d,0xfe66]];
 const differences = [];
 for (let i = 0; i < original.length; i++) {
   if (original[i] !== rebuilt[i]) {
@@ -49,6 +49,7 @@ for (let i = 0; i < original.length; i++) {
 const images = [['vic20-fixed.bin', rebuilt], ['basic.901486-01-fixed.bin', rebuilt.subarray(0,8192)], ['kernal.901486-07-fixed.bin', rebuilt.subarray(8192)]];
 for (const [name, data] of images) {
   fs.writeFileSync(path.join(build, name), data);
+  if (process.argv.includes('--update-roms')) fs.writeFileSync(path.join(root, 'roms', name), data);
   if (!data.equals(fs.readFileSync(path.join(root, 'roms', name)))) throw new Error(`Build differs from published ROM: ${name}`);
 }
 const report = { bytes: rebuilt.length, changedBytes: differences.length, preservedLabels, sha256: crypto.createHash('sha256').update(rebuilt).digest('hex'), publishedRomsMatch: true, differences };

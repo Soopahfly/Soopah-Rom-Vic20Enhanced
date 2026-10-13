@@ -1,12 +1,17 @@
 {
   "emulator": "py65 1.2.0, NMOS 6502",
   "scope": "Focused ROM-routine tests; VIA IER semantics modelled; no full VIC-20 peripheral emulation",
-  "testGroups": 7,
-  "cases": 2270,
+  "testGroups": 8,
+  "cases": 2271,
   "results": [
     {
       "test": "ROM labels, public jump table and hardware vectors preserved",
       "cases": 1409,
+      "passed": true
+    },
+    {
+      "test": "2026 startup banner fits the original 22-column field",
+      "cases": 1,
       "passed": true
     },
     {

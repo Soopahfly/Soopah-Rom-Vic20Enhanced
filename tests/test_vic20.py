@@ -74,6 +74,9 @@ assert label_count > 500
 assert FIXED[-128:] == ORIGINAL[-128:], 'KERNAL public jump table or vectors changed'
 record('ROM labels, public jump table and hardware vectors preserved', label_count)
 
+assert FIXED[0x2436:0x244F] == b'\x93CBM BASIC V2 - 2026   \r\x00', 'Wrong startup banner'
+record('2026 startup banner fits the original 22-column field', 1)
+
 # Status values survive read-and-clear; register and stack contracts are retained.
 for value in range(256):
     cpu, mem = machine(entry=0xFE57)

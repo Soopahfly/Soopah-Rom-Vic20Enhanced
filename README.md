@@ -5,8 +5,9 @@ Commented, address-preserving corrections for the Commodore VIC-20 PAL KERNAL
 
 The patched source builds to a 16 KB image at $C000-$FFFF. All 1,409 existing ROM
 labels, the public KERNAL jump table and hardware vectors retain their addresses.
-The BASIC ROM is unchanged. The patched KERNAL differs from the production image
-at 129 bytes, including helper routines in existing spare ROM space.
+The BASIC ROM is unchanged. The patched KERNAL includes helper routines in existing
+spare ROM space and a startup banner reading `CBM BASIC V2 - 2026`. Three trailing
+spaces retain the original 22-byte banner field. Colours are unchanged.
 
 ## Corrections
 
@@ -54,7 +55,10 @@ Build outputs go to `build/`. The build checks that the resulting images match
 the files in `roms/`, that existing ROM labels remain in place, and that changed
 bytes stay within the defined patch ranges.
 
-All seven test groups pass. They cover status and received-byte values 0-255,
+After an intentional source change, `node scripts/build.mjs --update-roms` refreshes
+the published ROM files; run the tests before committing those outputs.
+
+All eight test groups pass. They cover the startup banner, status and received-byte values 0-255,
 filename lengths 0-255, handshake combinations, empty/full queues, pointer wrap,
 direct/program VERIFY modes, and NMI injection at every transmit instruction
 boundary. Each original failure is reproduced before its correction is checked.

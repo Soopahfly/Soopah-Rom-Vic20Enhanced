@@ -1,8 +1,8 @@
 {
   "bytes": 16384,
-  "changedBytes": 129,
+  "changedBytes": 150,
   "preservedLabels": 1409,
-  "sha256": "d2e3dcab8104214a2c0de7bb7d306e025c07ea4daf8a7da1866c00731160d356",
+  "sha256": "2fff7db7b83747fcb6fb1b499735f379bbc3846cdeff7751fd301bfef9858f71",
   "publishedRomsMatch": true,
   "differences": [
     {
@@ -14,6 +14,111 @@
       "address": "$E18B",
       "original": 240,
       "patched": 208
+    },
+    {
+      "address": "$E437",
+      "original": 42,
+      "patched": 67
+    },
+    {
+      "address": "$E438",
+      "original": 42,
+      "patched": 66
+    },
+    {
+      "address": "$E439",
+      "original": 42,
+      "patched": 77
+    },
+    {
+      "address": "$E43A",
+      "original": 42,
+      "patched": 32
+    },
+    {
+      "address": "$E43B",
+      "original": 32,
+      "patched": 66
+    },
+    {
+      "address": "$E43C",
+      "original": 67,
+      "patched": 65
+    },
+    {
+      "address": "$E43D",
+      "original": 66,
+      "patched": 83
+    },
+    {
+      "address": "$E43E",
+      "original": 77,
+      "patched": 73
+    },
+    {
+      "address": "$E43F",
+      "original": 32,
+      "patched": 67
+    },
+    {
+      "address": "$E440",
+      "original": 66,
+      "patched": 32
+    },
+    {
+      "address": "$E441",
+      "original": 65,
+      "patched": 86
+    },
+    {
+      "address": "$E442",
+      "original": 83,
+      "patched": 50
+    },
+    {
+      "address": "$E443",
+      "original": 73,
+      "patched": 32
+    },
+    {
+      "address": "$E444",
+      "original": 67,
+      "patched": 45
+    },
+    {
+      "address": "$E446",
+      "original": 86,
+      "patched": 50
+    },
+    {
+      "address": "$E447",
+      "original": 50,
+      "patched": 48
+    },
+    {
+      "address": "$E448",
+      "original": 32,
+      "patched": 50
+    },
+    {
+      "address": "$E449",
+      "original": 42,
+      "patched": 54
+    },
+    {
+      "address": "$E44A",
+      "original": 42,
+      "patched": 32
+    },
+    {
+      "address": "$E44B",
+      "original": 42,
+      "patched": 32
+    },
+    {
+      "address": "$E44C",
+      "original": 42,
+      "patched": 32
     },
     {
       "address": "$E47C",
