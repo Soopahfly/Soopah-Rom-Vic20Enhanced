@@ -1,4 +1,4 @@
-# Universal 8 KB KERNAL: Experiment 1
+# Universal 8 KB KERNAL: Experiment 2
 
 **Experimental, not the stable release.** One 8,192-byte KERNAL detects PAL or
 NTSC. The matching BASIC is also 8,192 bytes. There is no bank switching or extra
@@ -7,8 +7,11 @@ ROM chip. Keep the original character ROM.
 ## Downloads And Installation
 
 Download the pair from the
-[experimental prerelease](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/releases/tag/universal-8k-exp1),
+[Experiment 2 prerelease](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/releases/tag/universal-8k-exp2),
 or a successful Actions run's separate `vic20-universal-8k-experimental` artifact.
+The [Experiment 1 download](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/releases/tag/universal-8k-exp1)
+remains available unchanged for comparison. BASIC is byte-identical between the
+two experiments, so Experiment 1's BASIC also works with Experiment 2's KERNAL.
 
 Use `kernal-universal-experimental.bin` as KERNAL and
 `basic-universal-experimental.bin` as BASIC. **Do not mix this pair with the stable
@@ -37,6 +40,54 @@ your usual software. Restore the original matched pair if anything behaves oddly
 To inspect detection in BASIC, `PRINT PEEK(678)` reads the region byte at $02A6:
 values 128 or higher indicate PAL; values below 128 indicate NTSC. Only its sign
 bit is meaningful, so the exact numeric value can vary.
+
+## Experiment 2 Changes
+
+The KERNAL remains exactly 8,192 bytes. Two pairs of identical VIA setup writes
+are replaced with one shared write each: $913E clears both interrupt-enable
+registers and $913B sets both auxiliary-control registers to $40. No shared
+reads are used. Six instruction bytes are removed; a two-byte branch skips the
+new padding, leaving four usable spare bytes at $FE35-$FE38. All original label
+addresses stay fixed. The spare bytes are reserved, not a new BASIC command.
+
+The branch is safe because the preceding serial-clock routine ORs bit 1 into A,
+leaving Z clear. It also prevents running the padding. A repeatable frozen-raster
+comparison measures five fewer CPU cycles in IOINIT than Experiment 1. This is
+a small setup saving, not a noticeable general speed increase. Garbage collection
+still uses the stock mover; this change does not restore that optimisation or
+resolve the outstanding RS-232 receive-phase concern.
+
+The decode was checked against the original Commodore
+[early PAL schematic](https://www.zimmers.net/anonftp/pub/cbm/schematics/computers/vic20/324001_2.gif),
+[cost-reduced schematic](https://www.zimmers.net/anonftp/pub/cbm/schematics/computers/vic20/251027l2.gif)
+and [VICE's implementation](https://github.com/VICE-Team/svn-mirror/blob/fa7f1e1ec4f1b97d00c5b8117e12a592992f7262/vice/src/vic20/vic20.c).
+Each VIA's positive chip-select input uses a separate address bit (A4/A5), so both
+are selected for $913x writes within I/O0. The model now applies that decoding,
+rejects shared reads, and compares each chip's ordered write trace and final state
+against the immutable Experiment 1 image across 80 combinations of prior VIA
+state, caller flags and video origin. Reviewing VICE source is not a VICE run.
+
+### RAM Coverage
+
+Reset-to-READY, complete screen/colour contents and typed-character checks now run
+in PAL and NTSC at two starting raster phases for each of ten configurations.
+Each screen is compared with the stable ROM booting in the same memory map.
+
+| Expansion | BASIC Bytes Free |
+| --- | --- |
+| None | 3583 |
+| 3 KB (RAM123) | 6655 |
+| 8 KB (BLK1) | 11775 |
+| 16 KB (BLK1/2) | 19967 |
+| 24 KB (BLK1/2/3) | 28159 |
+| 32 KB (BLK1/2/3/5) | 28159 |
+| 35 KB (RAM123 + BLK1/2/3/5) | 28159 |
+| 3 KB + 8 KB (RAM123 + BLK1) | 11775 |
+| BLK2 only, with BLK1 absent | 3583 |
+| BLK5 only | 3583 |
+
+The last two cases check that disconnected expansion RAM is not incorrectly
+counted by BASIC. These are simulated maps, not tests of physical cartridges.
 
 ## How It Fits
 
@@ -68,11 +119,11 @@ not eight additional universal permutations.
 
 ## Verification And Risks
 
-Simulated NMOS 6502 tests pass: 2,230 universal cases, 2,275 core regressions and
+Simulated NMOS 6502 tests pass: 2,342 universal cases, 2,275 core regressions and
 193 BASIC cases. This includes every PAL/NTSC raster phase, initial interlace,
 frozen raster, register contracts, all baud codes, the actual receive-start
 lookup, standard/custom keyboard tables, and reset-to-READY with typing in both
-regions and RAM layouts. Worst-case detector times in the model are 22,176 PAL
+regions and all ten RAM layouts. Worst-case detector times in the model are 22,176 PAL
 cycles and 16,998 NTSC cycles, approximately one frame.
 
 **Not tested in VICE or on physical hardware.** Synthetic raster/VIA behaviour

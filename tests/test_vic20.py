@@ -25,11 +25,18 @@ class Memory(list):
         self.transmitted = []
 
     def __getitem__(self, address):
+        if isinstance(address, int) and 0x9130 <= address <= 0x913F:
+            raise AssertionError('ROM read from shared VIA address')
         if address == 0x911E:
             return 0x80 | self.ier
         return super().__getitem__(address)
 
     def __setitem__(self, address, value):
+        if isinstance(address, int) and 0x9130 <= address <= 0x913F:
+            # Shared writes select both VIAs, as on the board and in VICE.
+            self[0x9110 + (address & 15)] = value
+            self[0x9120 + (address & 15)] = value
+            return
         if address == 0x911E:
             if value & 0x80:
                 self.ier |= value & 0x7F

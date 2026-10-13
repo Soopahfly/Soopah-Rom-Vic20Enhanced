@@ -1,5 +1,25 @@
 # Changelog
 
+## Universal 8 KB Experiment 2 - 2026-10-13
+
+- Verify shared VIA selection against early and cost-reduced Commodore schematics
+  and VICE source, rather than relying solely on the blog's suggested optimisation.
+- Replace duplicate interrupt-disable and ACR writes with write-only $913E/$913B.
+- Remove six instruction bytes, spend two on a proven-always-taken skip branch,
+  and recover four usable bytes at $FE35-$FE38. Retain every original ROM label.
+- Measure five fewer IOINIT cycles against Experiment 1 with a frozen raster;
+  this is not a meaningful overall machine-speed improvement.
+- Compare ordered per-chip writes, register/flag contracts and final VIA state
+  against Experiment 1 across 80 prior-state/flag/origin cases. Reject shared reads.
+- Test PAL/NTSC boot, complete screen and colours, free-memory counts and typing
+  across ten RAM maps: none, 3/8/16/24/32/35 KB, 3+8 KB, BLK2-only and BLK5-only.
+- Pass 2,342 universal simulated cases, 2,275 core regressions and 193 BASIC cases.
+- Keep BASIC byte-identical to Experiment 1, KERNAL at 8,192 bytes, and the stock
+  collector, bug fixes, rainbow and V2.26 banner unchanged.
+- Publish a separate Experiment 2 prerelease; preserve Experiment 1 and stable ROMs.
+- VICE runtime, physical hardware and end-to-end peripherals remain unverified.
+  RS-232 receive-start overhead and possible sample-phase compensation are unchanged.
+
 ## Universal 8 KB Experiment 1 - 2026-10-13
 
 - Assemble a universal KERNAL of exactly 8,192 bytes with a matching BASIC ROM.

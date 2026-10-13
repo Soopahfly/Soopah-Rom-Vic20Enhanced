@@ -20,3 +20,5 @@ Physical hardware testing remains outstanding.
 The separate universal experiment keeps the bug fixes and screen, but uses stock
 string-collection timing and reserves five system-RAM bytes. It has simulated
 PAL/NTSC tests, not VICE or physical validation. Stable `roms/` remain unchanged.
+Experiment 2 recovers four usable ROM bytes with shared VIA writes and tests ten
+RAM layouts. Experiment 1 remains available for comparison; BASIC is unchanged.

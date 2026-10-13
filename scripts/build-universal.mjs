@@ -196,15 +196,14 @@ replace('\t.res\t$E4A0-*, $FF', `UNI_VAL_CHECKPOINT
     JMP FIX_VAL_TERMINATE
 ${pad('E4A0')}`);
 
-// Compact only duplicate immediate loads and zero-DDR setup. Interrupts remain
-// disabled during raster detection; restore caller flags and stock final X=0.
+// A4/A5 select each VIA independently (Commodore schematics and VICE vic20.c).
+// $913x writes select both, without the VIC. Never read these shared addresses.
+// Interrupts stay disabled during detection; retain caller flags and final X=0.
 region('LAB_FDF9', 'LAB_FE39', `LAB_FDF9
     LDA #$7F
-    STA LAB_911E
-    STA LAB_912E
+    STA $913E          ; clear both interrupt-enable registers in one bus write
     LDA #$40
-    STA LAB_912B
-    STA LAB_911B
+    STA $913B          ; both ACRs need the same T1 free-run configuration
     LDA #$FE
     STA LAB_911C
     LDA #$DE
@@ -225,6 +224,9 @@ region('LAB_FDF9', 'LAB_FE39', `LAB_FDF9
     LDA #$82
     STA LAB_911E
     JSR LAB_EF8D
+    BNE LAB_FE39       ; EF8D ORs in bit 1, so Z is always clear on return
+UNI_IOINIT_SPARE
+    .assert * = $FE35, error, "Shared VIA writes must leave four bytes spare"
 ${pad('FE39')}`);
 region('LAB_FE39', 'LAB_FE49', `LAB_FE39
     LDA #$C0
@@ -244,9 +246,9 @@ if (unusedVectorBytes < source.indexOf('\nLAB_FFF3\n')) throw new Error('Missing
 source = source.slice(0, unusedVectorBytes) + 'UNI_ORIGINS\n\t.byte $05,$19,$FF,$FF\n' + source.slice(unusedVectorBytes + '\t.byte\t$FF,$FF,$FF,$FF\n'.length);
 for (const obsolete of ['FIX_VAL_SAVE_SCRATCH', 'FIX_VAL_NORMAL']) replace(`.export ${obsolete}\n`, '');
 region('FIX_GC_MOVE', 'LAB_DF71', basicVal);
-source += '\nUNI_REGION = $02A6\n.export UNI_REGION, UNI_DETECT, UNI_DETECT_PRESERVE, UNI_VIDEO, UNI_TICK, UNI_BAUD_BYTE, UNI_BAUD_HIGH, UNI_KEY_READ, UNI_NTSC_PREFIX\n';
+source += '\nUNI_REGION = $02A6\n.export UNI_REGION, UNI_DETECT, UNI_DETECT_PRESERVE, UNI_VIDEO, UNI_TICK, UNI_BAUD_BYTE, UNI_BAUD_HIGH, UNI_KEY_READ, UNI_NTSC_PREFIX, UNI_IOINIT_SPARE\n';
 const generated = path.join(out, 'vic20-universal.s');
-fs.writeFileSync(generated, '; EXPERIMENTAL: use the matching BASIC and KERNAL pair.\n' + source);
+fs.writeFileSync(generated, '; EXPERIMENT 2: shared VIA writes; use the matching experimental ROM pair.\n' + source);
 function run(name, args) {
   const exe = process.env[name.toUpperCase()] || (process.platform === 'win32' ? `${name}.exe` : name);
   const result = spawnSync(exe, args, { encoding: 'utf8' });
@@ -283,8 +285,10 @@ for (let offset = 0; offset < binary.length; offset++) {
   changedBytes++;
 }
 const images = [['basic-universal-experimental.bin', binary.subarray(0, 8192)], ['kernal-universal-experimental.bin', binary.subarray(8192)]];
-const report = { experimental: true, basicBytes: 8192, kernalBytes: 8192, preservedLabels,
+const report = { experimental: true, experiment: 2, basicBytes: 8192, kernalBytes: 8192, preservedLabels,
   changedBytesFromStable: changedBytes, images: {}, stockGarbageCollector: true,
+  sharedViaWrites: { addresses: ['$913E', '$913B'], rawInstructionBytesSaved: 6,
+    skipBranchBytes: 2, usableBytesRecovered: 4, spareRange: '$FE35-$FE38' },
   ram: { valCleanup: '$02A1-$02A4', regionFlag: '$02A6 (sign bit PAL=1, NTSC=0)' } };
 const git = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' });
 if (git.status !== 0) throw new Error('Cannot determine source commit');
