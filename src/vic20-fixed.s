@@ -1,7 +1,7 @@
-; Soopah ROM V2.26: six VIC-20 ROM corrections and a compact startup rainbow.
-; Target: PAL 901486-07 KERNAL with the unchanged 901486-01 BASIC ROM.
+; Soopah ROM V2.26: BASIC/KERNAL corrections and a compact startup rainbow.
+; Target: 901486-01 BASIC and PAL 901486-07 KERNAL, patched as a matched pair.
 ; V2.26 identifies this build; BASIC's language and token set remain standard V2.
-; This build intentionally differs from the stock KERNAL; see README.md.
+; Both ROMs intentionally differ from stock; see README.md for tests and limits.
 
 ;***********************************************************************************;
 ;***********************************************************************************;
@@ -5944,7 +5944,7 @@ LAB_D606
 	LDX	LAB_34		; get bottom of string space high byte
 	STA	LAB_58		; save destination end low byte
 	STX	LAB_59		; save destination end high byte
-	JSR	LAB_C3BF		; open up space in memory, don't set array end. this
+	JSR	FIX_GC_MOVE		; avoid copying strings already in their final position
 					; copies the string from where it is to the end of the
 					; uncollected string memory
 	LDY	LAB_55		; restore offset to descriptor start
@@ -6363,16 +6363,19 @@ LAB_D7B5
 	INX				; increment string end high byte
 LAB_D7CD
 	STX	LAB_25		; save string end high byte
-	LDY	#$00			; set index to $00
-	LDA	(LAB_24),Y		; get string end byte
-	PHA				; push it
-	TYA				; clear A
-	STA	(LAB_24),Y		; terminate string with $00
-	JSR	LAB_0079		; scan memory
-	JSR	LAB_DCF3		; get FAC1 from string
-	PLA				; restore string end byte
-	LDY	#$00			; clear index
-	STA	(LAB_24),Y		; put string end byte back
+	JMP	FIX_VAL_SAVE_SCRATCH	; preserve caller scratch before installing cleanup
+; Carry selects normal return or the restored error vector after scratch pops.
+FIX_VAL_POP
+	LDY	#$03
+FIX_VAL_POP_BYTE
+	PLA
+	STA	$00FB,Y
+	DEY
+	BPL	FIX_VAL_POP_BYTE
+	BCC	LAB_D7E2
+	JMP	(LAB_0300)
+	.assert	* <= $D7E2, error, "VAL scratch restore exceeds retired code"
+	.res	$D7E2-*, $EA
 
 ; restore BASIC execute pointer from temp
 
@@ -8041,10 +8044,28 @@ LAB_DF52
 
 ;***********************************************************************************;
 ;
-; spare bytes, not referenced
-
-	.byte	$BF,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA
-	.byte	$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA
+; Preserve the BASIC checksum byte; use only the following 30 spare bytes.
+	.byte	$BF
+; Skip a self-copy when the string already ends at FRETOP. Retain the old
+; descriptor update convention: destination high byte is one page low.
+FIX_GC_MOVE
+	LDA	LAB_5A
+	CMP	LAB_33
+	BNE	FIX_GC_COPY
+	LDA	LAB_5B
+	CMP	LAB_34
+	BNE	FIX_GC_COPY
+	LDA	LAB_5F
+	STA	LAB_58
+	LDA	LAB_60
+	SEC
+	SBC	#$01
+	STA	LAB_59
+	RTS
+FIX_GC_COPY
+	JMP	LAB_C3BF		; fragmented strings still use the original mover
+	.assert	* <= $DF71, error, "Collector helper exceeds spare space"
+	.res	$DF71-*, $AA
 
 
 ;***********************************************************************************;
@@ -9522,30 +9543,24 @@ LAB_E64F
 
 LAB_E657
 	LDY	LAB_D3		; get cursor column
-	LDA	(LAB_D1),Y		; get character from the current screen line
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				; just a few wasted cycles.
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
+	LDA	(LAB_D1),Y		; get the character without changing editor state
+	JMP	FIX_SCREEN_CHAR		; skip obsolete non-timing NOPs
+; Restore VAL's byte and original vector on both exits. $FB-$FD are
+; transient KERNAL scratch while the numeric parser runs. $FE holds the stack
+; checkpoint; all four scratch bytes are restored on both exits.
+FIX_VAL_CLEAN
+	LDA	$FB
+	STA	LAB_0300
+	LDA	$FC
+	STA	LAB_0300+1
+	LDY	#$00
+	LDA	$FD
+	STA	(LAB_24),Y
+	SEC				; error exit; normal cleanup explicitly clears carry
+	RTS
+	.assert	* <= $E672, error, "VAL cleanup exceeds editor padding"
+	.res	$E672-*, $EA
+FIX_SCREEN_CHAR
 	STA	LAB_D7		; save temporary last character
 	AND	#$3F			; mask key bits
 	ASL	LAB_D7		; << temporary last character
@@ -9908,27 +9923,23 @@ LAB_E7FA
 	JMP	LAB_ED21		;.
 
 LAB_E800
-	NOP				; just a few wasted cycles
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
+	JMP	FIX_SHIFTED_CHAR		; skip obsolete non-timing padding
+; Save caller scratch and checkpoint the stack before numeric conversion.
+FIX_VAL_SAVE_SCRATCH
+	LDA	$FB
+	PHA
+	LDA	$FC
+	PHA
+	LDA	$FD
+	PHA
+	LDA	$FE
+	PHA
+	TSX
+	STX	$FE			; conversion errors must discard nested parser frames
+	JMP	FIX_VAL_SETUP
+	.assert	* <= $E815, error, "VAL scratch save exceeds padding"
+	.res	$E815-*, $EA
+FIX_SHIFTED_CHAR
 	AND	#$7F			; mask 0xxx xxxx, clear b7
 	CMP	#$7F			; was it $FF before the mask
 	BNE	LAB_E81D		; branch if not
@@ -10767,25 +10778,21 @@ LAB_EBDC
 	LDA	LAB_0291		; get shift mode switch $00 = enabled, $80 = locked
 	BMI	LAB_EC43		; if locked continue keyboard decode
 
-	NOP				; just a few wasted cycles
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
+	JMP	FIX_SHIFT_TOGGLE		; skip obsolete non-timing padding
+; Discard nested parser frames, preserving X's error number for the old handler.
+FIX_VAL_ERROR
+	TXA
+	LDX	$FE
+	TXS				; unwind numeric parser, retaining the saved scratch
+	PHA
+	JSR	FIX_VAL_CLEAN
+	JSR	LAB_D7E2
+	PLA
+	TAX
+	JMP	FIX_VAL_POP
+	.assert	* <= $EC00, error, "VAL error cleanup exceeds padding"
+	.res	$EC00-*, $EA
+FIX_SHIFT_TOGGLE
 
 					; toggle text mode
 	LDA	LAB_9005		; get start of character memory, ROM
@@ -10807,38 +10814,22 @@ LAB_EC0F
 	NOP				;
 	NOP				;
 LAB_EC18
-	NOP				; just a few wasted cycles
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
-	NOP				;
+	JMP	FIX_KEYBOARD_INDEX	; preserve A/flags; skip conversion NOPs
+; Install temporary error cleanup only for VAL's numeric conversion.
+FIX_VAL_TERMINATE
+	LDA	#<FIX_VAL_ERROR
+	STA	LAB_0300
+	LDA	#>FIX_VAL_ERROR
+	STA	LAB_0300+1
+	LDY	#$00
+	LDA	(LAB_24),Y
+	STA	$FD			; save the string end byte, often a closing quote
+	LDA	#$00
+	STA	(LAB_24),Y
+	JMP	FIX_VAL_CONVERT
+	.assert	* <= $EC38, error, "VAL setup exceeds keyboard padding"
+	.res	$EC38-*, $EA
+FIX_KEYBOARD_INDEX
 	TAX				; copy index to X
 	LDA	LAB_EC46,X		; get decode table pointer low byte
 	STA	LAB_F5		; save decode table pointer low byte
@@ -11878,7 +11869,12 @@ LAB_F0ED
 	BIT	LAB_911E
 	BVC	LAB_F102		; restart if the NMI stopped an empty transmitter
 	RTS
-	.res	$F102-*, $EA		; retain all following ROM addresses
+; Retired transmit code holds VAL's conversion and normal cleanup path.
+FIX_VAL_CONVERT
+	JSR	LAB_0079
+	JSR	LAB_DCF3
+	JMP	FIX_VAL_NORMAL
+	.res	$F102-*, $EA
 
 LAB_F102
 	LDA	LAB_0299		; get baud rate bit time low byte
@@ -12188,7 +12184,11 @@ LAB_F26C
 					; input device was RS232 device
 LAB_F26F
 	JMP	FIX_RX_WAIT		; wait for availability, not a nonzero character
-	.res	$F279-*, $EA		; retain the original return entry
+FIX_VAL_NORMAL
+	JSR	FIX_VAL_CLEAN
+	CLC
+	JMP	FIX_VAL_POP
+	.assert	* = $F279, error, "VAL normal cleanup must retain return entry"
 LAB_F279
 	RTS
 
@@ -13559,7 +13559,15 @@ LAB_F7FE
 	STY	LAB_9E		; clear name index
 LAB_F822
 	JMP	FIX_TAPE_NAME		; bound the copy to the cassette buffer
-	.res	$F834-*, $EA		; keep the existing write-header continuation
+; Save any caller-installed error vector before temporarily replacing it.
+FIX_VAL_SETUP
+	LDA	LAB_0300
+	STA	$FB
+	LDA	LAB_0300+1
+	STA	$FC
+	JMP	FIX_VAL_TERMINATE
+	.assert	* <= $F834, error, "VAL vector save exceeds retired code"
+	.res	$F834-*, $EA
 
 LAB_F834
 	JSR	LAB_F854		; set tape buffer start and end pointers
@@ -16819,6 +16827,15 @@ LAB_FFF3
 .export LAB_E4CF
 .export LAB_E4D7
 .export FIX_READ_STATUS
+.export FIX_GC_MOVE
+.export FIX_VAL_ERROR
+.export FIX_VAL_SETUP
+.export FIX_VAL_CLEAN
+.export FIX_VAL_TERMINATE
+.export FIX_VAL_CONVERT
+.export FIX_VAL_POP
+.export FIX_VAL_SAVE_SCRATCH
+.export FIX_VAL_NORMAL
 .export FIX_BOOT_RAINBOW
 .export FIX_TAPE_NAME
 .export FIX_TAPE_DONE

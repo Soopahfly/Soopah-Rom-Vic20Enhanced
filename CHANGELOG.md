@@ -10,6 +10,11 @@
 - Return RS-232 status before clearing it, preserving the caller's X/Y registers.
 - Return received NUL bytes from blocking RS-232 input.
 - Print successful VERIFY's OK message only in direct mode.
+- Restore VAL's string terminator and execution pointer before overflow errors.
+- Preserve custom BASIC error vectors and all borrowed $FB-$FE scratch bytes;
+  unwind parser frames before error cleanup, without permanent RAM allocation.
+- Skip garbage-collector self-copies for strings already in their final position.
+  Retain the original descriptor scans and collection semantics.
 
 ### Startup Screen
 
@@ -21,11 +26,15 @@
 
 ### Scope And Verification
 
-- Target the PAL 901486-07 KERNAL; the BASIC 901486-01 ROM remains unchanged.
+- Patch BASIC 901486-01 and PAL KERNAL 901486-07 as a matched pair.
 - Preserve the standard BASIC V2 language and token set.
 - Build and compare the published 8 KB images and combined 16 KB image.
-- Pass ten focused test groups, including reset-to-input tests with static I/O
+- Pass fifteen focused test groups (2,275 core cases and 192 BASIC cases),
+  including VAL overflow, custom vectors, collector differential tests and
+  reset-to-input tests with static I/O
   and expanded/unexpanded RAM maps. All 1,409 existing ROM labels remain in place.
 - Full-machine timing, real tape and real RS-232 operation remain untested.
+- Packed-heap collector samples use 38.52% and 73.19% fewer emulated cycles;
+  a fragmented sample uses 0.22% more. These are not general speed guarantees.
 
 Original source attribution is retained in the assembly and reference files.

@@ -1,0 +1,63 @@
+{
+  "emulator": "py65 1.2.0, NMOS 6502",
+  "testGroups": 5,
+  "cases": 192,
+  "results": [
+    {
+      "test": "VAL overflow restoration, ordinary results, page crossing and custom error vectors",
+      "cases": 44,
+      "passed": true
+    },
+    {
+      "test": "Collector equivalence across temporary, scalar, array and empty strings",
+      "cases": 64,
+      "passed": true
+    },
+    {
+      "test": "Collector equivalence with an unexpanded-size heap",
+      "cases": 2,
+      "passed": true
+    },
+    {
+      "test": "Packed-heap cycle reduction measured against the original collector",
+      "cases": 2,
+      "passed": true
+    },
+    {
+      "test": "Reclaimed editor/keyboard NOP paths preserve registers and flags",
+      "cases": 80,
+      "passed": true
+    }
+  ],
+  "collectorBenchmarks": [
+    {
+      "strings": 8,
+      "length": 200,
+      "fragmented": false,
+      "originalCycles": 36262,
+      "patchedCycles": 9723,
+      "reductionPercent": 73.19
+    },
+    {
+      "strings": 32,
+      "length": 128,
+      "fragmented": false,
+      "originalCycles": 173508,
+      "patchedCycles": 106676,
+      "reductionPercent": 38.52
+    },
+    {
+      "strings": 32,
+      "length": 128,
+      "fragmented": true,
+      "originalCycles": 174395,
+      "patchedCycles": 174779,
+      "reductionPercent": -0.22
+    }
+  ],
+  "limits": [
+    "Collector still performs repeated descriptor scans",
+    "Cycle counts are routine-level emulation, not hardware measurements",
+    "VAL borrows $FB-$FE but restores their caller values on both exits"
+  ]
+}

@@ -1,14 +1,14 @@
 # Soopah-Rom-Vic20Enhanced
 
 **Soopah ROM V2.26** provides commented, address-preserving corrections for the
-Commodore VIC-20 PAL KERNAL 901486-07, with the standard BASIC 901486-01 ROM.
+Commodore VIC-20 BASIC 901486-01 and PAL KERNAL 901486-07 ROMs.
 V2.26 is this project's build identifier. The BASIC language and token set remain
 standard Commodore BASIC V2.
 
 The patched source builds to a 16 KB image at $C000-$FFFF. All 1,409 existing ROM
 labels, the public KERNAL jump table and hardware vectors retain their addresses.
-The BASIC ROM is unchanged. The patched KERNAL includes helper routines in existing
-spare ROM space and a startup banner reading `* CBM BASIC V2.26 *`. Three trailing
+Both ROMs are patched. Helpers reuse spare ROM space and obsolete non-timing
+padding. The startup banner reads `* CBM BASIC V2.26 *`. Three trailing
 spaces retain the original 22-byte banner field. The default blue text, white
 background and cyan border are retained.
 An eleven-cell rainbow occupies the top-right three columns over five rows, with
@@ -33,26 +33,43 @@ figure is calculated normally; an unexpanded VIC-20 displays 3583 bytes free.
    rejecting zero-valued characters.
 6. **VERIFY message:** identify direct commands using the execution pointer's high
    byte and suppress OK during program execution.
+7. **BASIC VAL overflow:** restore the temporarily overwritten string-end byte
+   before forwarding a conversion error, protecting program text such as a closing
+   quote. Restore the execution pointer, original error vector and borrowed
+   $FB-$FE scratch bytes on both exits. Custom error handlers still receive X's
+   original error number. Ordinary numeric results and overflow errors are retained.
+8. **BASIC string collection:** skip the byte-copy loop when a selected string is
+   already in its final position. Descriptor handling and collection order are
+   unchanged; the collector still repeatedly scans descriptors.
 
-The assembly comments explain each correction. No additional RAM allocation or
-performance optimisations are included.
+The assembly comments explain each correction. No permanent RAM is allocated and
+BASIC's free-memory total is unchanged. VAL temporarily uses four additional stack
+bytes plus helper call frames.
+
+Routine-level emulation measured 73.19% fewer collector cycles for eight packed
+200-byte strings and 38.52% fewer for 32 packed 128-byte strings. A fragmented
+32-string example took 0.22% more cycles. These are sample collector timings, not
+whole-program or hardware speed claims; short strings and fragmented heaps may
+benefit little or incur comparison overhead.
 
 ## Files
 
 | Location | Contents |
 | --- | --- |
 | `src/` | Complete commented assembly and linker configuration |
-| `roms/` | Patched 8 KB KERNAL, unchanged 8 KB BASIC and combined 16 KB image |
+| `roms/` | Patched 8 KB BASIC and KERNAL, plus combined 16 KB image |
 | `reference/` | Original disassembly and unmodified production ROMs |
 | `scripts/build.mjs` | Portable build, address checks and published-ROM comparison |
 | `tests/test_vic20.py` | Focused NMOS 6502 emulator tests |
+| `tests/test_basic.py` | VAL regressions, collector equivalence and cycle samples |
 | `verification/` | Build differences and test results |
 | `CHANGELOG.md` | Changes and verification limits for V2.26 |
 
 For an emulator's separate ROM settings, use `roms/kernal.901486-07-fixed.bin` for
 KERNAL and `roms/basic.901486-01-fixed.bin` for BASIC. The combined
 `roms/vic20-fixed.bin` places BASIC first and KERNAL second; it is not a single
-8 KB replacement chip image. Keep the original character ROM.
+8 KB replacement chip image. Install both patched ROMs together: the BASIC patches
+call helpers in the patched KERNAL. Keep the original character ROM.
 
 ## Build And Test
 
@@ -64,6 +81,7 @@ executable paths. From the repository root:
 python -m pip install -r requirements-test.txt
 node scripts/build.mjs
 python tests/test_vic20.py
+python tests/test_basic.py
 ```
 
 Build outputs go to `build/`. The build checks that the resulting images match
@@ -73,13 +91,16 @@ bytes stay within the defined patch ranges.
 After an intentional source change, `node scripts/build.mjs --update-roms` refreshes
 the published ROM files; run the tests before committing those outputs.
 
-All ten test groups pass. They cover the startup banner, the rainbow on both
+All fifteen test groups pass. The ten core groups cover the startup banner, the rainbow on both
 screen-memory bases, status and received-byte values 0-255, filename lengths
 0-255, handshake combinations, empty/full queues, pointer wrap,
 direct/program VERIFY modes, and NMI injection at every transmit instruction
 boundary. Each original failure is reproduced before its correction is checked.
-The 2,275 reported cases include 1,409 ROM-label checks. Counts and binary hashes
-are recorded in `verification/`.
+The 2,275 core cases include 1,409 ROM-label checks. Five BASIC groups add 192
+cases covering overflowing and ordinary VAL calls, custom error vectors,
+scratch/stack preservation, page crossings, temporary/scalar/array strings,
+empty strings, expanded/unexpanded-size heaps and reclaimed padding paths.
+Counts, sample timings and binary hashes are recorded in `verification/`.
 
 Tests execute real ROM instructions using py65 1.2.0. VIA interrupt-enable
 semantics are modelled, and a synthetic NMI wrapper calls the actual ROM consumer.
@@ -89,7 +110,10 @@ and expanded RAM maps; its text and editor position match the undecorated build.
 This does not model video timing, interrupts or real peripherals. Full-machine
 boot, real tape and real RS-232 operation have not been tested. This build targets
 PAL systems; no NTSC build is supplied. Stock-ROM checksum diagnostics will not
-recognise the modified KERNAL as an original ROM.
+recognise either modified ROM as an original ROM. Programs replacing the BASIC
+error vector must respect its normal X-error-number convention. Unusually deep
+expression stacks and software relying on original instruction timing need
+separate compatibility testing.
 
 ## Provenance
 
