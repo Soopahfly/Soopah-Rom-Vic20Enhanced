@@ -1,8 +1,8 @@
 {
   "bytes": 16384,
-  "changedBytes": 227,
+  "changedBytes": 226,
   "preservedLabels": 1409,
-  "sha256": "921ee94d791eb6770c0e2a73d8d130af17151db2b6189f99bdb6f3a2db2e9153",
+  "sha256": "edf9f5e71c70e328d52d3120885f3d129016c0832994c839a856d3b3cfeea313",
   "publishedRomsMatch": true,
   "differences": [
     {
@@ -103,17 +103,12 @@
     {
       "address": "$E447",
       "original": 50,
-      "patched": 48
-    },
-    {
-      "address": "$E448",
-      "original": 32,
-      "patched": 50
+      "patched": 54
     },
     {
       "address": "$E449",
       "original": 42,
-      "patched": 54
+      "patched": 32
     },
     {
       "address": "$E44A",
