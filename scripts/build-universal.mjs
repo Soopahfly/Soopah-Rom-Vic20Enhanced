@@ -26,6 +26,16 @@ const pad = (end, fill = '$EA') => `.assert * <= $${end}, error, "Experimental s
 replace('\tJMP\tFIX_VAL_SAVE_SCRATCH\t; preserve caller scratch before installing cleanup', '\tJMP FIX_VAL_SETUP');
 replace('; Carry selects normal return or the restored error vector after scratch pops.', '; Experimental VAL no longer needs the scratch-pop path.');
 region('FIX_VAL_POP', 'LAB_D7E2', `FIX_VAL_POP
+; BASIC's retired scratch-pop slot selects two strings on the same ROM page.
+UNI_SHOW_REGION
+    LDA #<UNI_PAL_TEXT
+    LDY #>UNI_PAL_TEXT
+    LDX UNI_REGION
+    BMI UNI_REGION_SELECTED
+    LDA #<UNI_NTSC_TEXT
+UNI_REGION_SELECTED
+    JMP UNI_PRINT_REGION
+    .assert >UNI_PAL_TEXT = >UNI_NTSC_TEXT, error, "Region strings must share a page"
 ${pad('D7E2')}`);
 replace('\tJSR\tFIX_GC_MOVE\t\t; avoid copying strings already in their final position', '\tJSR LAB_C3BF ; experimental fit uses the stock string mover');
 replace('; Skip a self-copy when the string already ends at FRETOP. Retain the old\n; descriptor update convention: destination high byte is one page low.', '; Experimental fit: stock collection, with this slot assigned to VAL cleanup.');
@@ -70,6 +80,45 @@ UNI_VIDEO_STORE
     RTS
 ${pad('E815')}`);
 replace('\tSTA\tLAB_9000-1,X\t; save byte to Vic chip', '\tJSR UNI_VIDEO ; PAL or NTSC origin, other VIC registers unchanged');
+region('FIX_BOOT_RAINBOW', 'FIX_BOOT_HEADING', `FIX_BOOT_RAINBOW
+    LDX #3
+    LDY #6
+    JSR LAB_E50A+2      ; PLOT's write path: fixed row despite memory-count wrapping
+    JSR UNI_SHOW_REGION ; returns screen page in A, with C clear
+    STA $FC
+    AND #3
+    ORA #$94
+    STA $FE
+    LDY #0
+    STY $FB
+    STY $FD
+    LDX #4
+FIX_BOOT_ROW
+    LDA FIX_BOOT_COLOURS,X
+    STA $FF
+    TXA
+    TAY                 ; draw backwards; retain row width in X
+    LDA #$69
+    STA ($FB),Y         ; diagonal at the rightmost cell of each stripe
+UNI_BOOT_PIXEL
+    LDA $FF
+    STA ($FD),Y
+    DEY
+    BMI UNI_BOOT_NEXT
+    LDA #$A0
+    STA ($FB),Y
+    BMI UNI_BOOT_PIXEL  ; A=$A0 makes this an unconditional branch
+UNI_BOOT_NEXT
+    LDA $FB
+    ADC #22             ; C starts clear; row bases 0..110 cannot overflow
+    STA $FB
+    STA $FD
+    DEX
+    BPL FIX_BOOT_ROW
+    LDA #5
+    STA LAB_D6
+    ; Cursor stays disabled until input; READY's leading CR sets row-six pointers.
+    JMP LAB_C644`);
 region('FIX_VAL_ERROR', 'FIX_SHIFT_TOGGLE', `UNI_KEY_READ
     LDY LAB_CB
     LDA LAB_F5
@@ -227,12 +276,22 @@ region('LAB_FDF9', 'LAB_FE39', `LAB_FDF9
     BNE LAB_FE39       ; EF8D ORs in bit 1, so Z is always clear on return
 UNI_IOINIT_SPARE
     .assert * = $FE35, error, "Shared VIA writes must leave four bytes spare"
+UNI_PAL_TEXT
+    .byte "PAL",0
 ${pad('FE39')}`);
 region('LAB_FE39', 'LAB_FE49', `LAB_FE39
     LDA #$C0
     STA LAB_912E
     JMP UNI_TICK
+UNI_PRINT_REGION
+    JSR LAB_CB1E        ; normal CHROUT applies text colour and RAM-layout mapping
+    LDA LAB_0288
+    CLC                 ; seed the rainbow's bounded pointer increments
+    RTS
 ${pad('FE49')}`);
+replace('\t.res\t$FE66-*, $EA\t\t; retain SETMSG and serial-status entry addresses', `UNI_NTSC_TEXT
+    .byte "NTSC",0
+${pad('FE66')}`);
 // Both OPEN and the receive-start NMI use the regional table, not just transmit.
 for (const [old, replacement] of [
   ['\tLDA\tLAB_FF5C-2,X\t; get timer constant low byte', '\tJSR UNI_BAUD_BYTE'],
@@ -246,9 +305,9 @@ if (unusedVectorBytes < source.indexOf('\nLAB_FFF3\n')) throw new Error('Missing
 source = source.slice(0, unusedVectorBytes) + 'UNI_ORIGINS\n\t.byte $05,$19,$FF,$FF\n' + source.slice(unusedVectorBytes + '\t.byte\t$FF,$FF,$FF,$FF\n'.length);
 for (const obsolete of ['FIX_VAL_SAVE_SCRATCH', 'FIX_VAL_NORMAL']) replace(`.export ${obsolete}\n`, '');
 region('FIX_GC_MOVE', 'LAB_DF71', basicVal);
-source += '\nUNI_REGION = $02A6\n.export UNI_REGION, UNI_DETECT, UNI_DETECT_PRESERVE, UNI_VIDEO, UNI_TICK, UNI_BAUD_BYTE, UNI_BAUD_HIGH, UNI_KEY_READ, UNI_NTSC_PREFIX, UNI_IOINIT_SPARE\n';
+source += '\nUNI_REGION = $02A6\n.export UNI_REGION, UNI_DETECT, UNI_DETECT_PRESERVE, UNI_VIDEO, UNI_TICK, UNI_BAUD_BYTE, UNI_BAUD_HIGH, UNI_KEY_READ, UNI_NTSC_PREFIX, UNI_IOINIT_SPARE, UNI_SHOW_REGION, UNI_PRINT_REGION\n';
 const generated = path.join(out, 'vic20-universal.s');
-fs.writeFileSync(generated, '; EXPERIMENT 2: shared VIA writes; use the matching experimental ROM pair.\n' + source);
+fs.writeFileSync(generated, '; EXPERIMENT 3: region label; use the matching experimental ROM pair.\n' + source);
 function run(name, args) {
   const exe = process.env[name.toUpperCase()] || (process.platform === 'win32' ? `${name}.exe` : name);
   const result = spawnSync(exe, args, { encoding: 'utf8' });
@@ -269,12 +328,12 @@ for (const match of labels.matchAll(/^al\s+([0-9A-F]+)\s+\.LAB_([0-9A-F]{4})$/gm
 }
 if (preservedLabels !== 1409) throw new Error(`Missing original labels: ${preservedLabels}`);
 const stable = fs.readFileSync(path.join(root, 'roms/vic20-fixed.bin'));
-const allowed = [[0xd629,0xd62c], [0xd7cf,0xd7e2], [0xdf53,0xdf71],
-  [0xe499,0xe4a0], [0xe5c8,0xe5cb], [0xe65e,0xe672], [0xe803,0xe815],
+const allowed = [[0xd629,0xd62c], [0xd7cf,0xd7e2], [0xdf53,0xdf71], [0xe40f,0xe412],
+  [0xe499,0xe4a0], [0xe5c8,0xe5cb], [0xe65e,0xe672], [0xe803,0xe815], [0xe929,0xe975],
   [0xeb74,0xeb78], [0xebf0,0xec00], [0xec1b,0xec38], [0xec4e,0xec5e],
   [0xed69,0xede4], [0xf0f6,0xf102], [0xf272,0xf279],
   [0xf4f6,0xf4f9], [0xf4fb,0xf4fe], [0xf825,0xf834], [0xfdf9,0xfe49],
-  [0xff3a,0xff3d], [0xff40,0xff43], [0xfff6,0xfff8]];
+  [0xfe60,0xfe66], [0xff3a,0xff3d], [0xff40,0xff43], [0xfff6,0xfff8]];
 let changedBytes = 0;
 for (let offset = 0; offset < binary.length; offset++) {
   if (binary[offset] === stable[offset]) continue;
@@ -285,10 +344,11 @@ for (let offset = 0; offset < binary.length; offset++) {
   changedBytes++;
 }
 const images = [['basic-universal-experimental.bin', binary.subarray(0, 8192)], ['kernal-universal-experimental.bin', binary.subarray(8192)]];
-const report = { experimental: true, experiment: 2, basicBytes: 8192, kernalBytes: 8192, preservedLabels,
+const report = { experimental: true, experiment: 3, basicBytes: 8192, kernalBytes: 8192, preservedLabels,
   changedBytesFromStable: changedBytes, images: {}, stockGarbageCollector: true,
   sharedViaWrites: { addresses: ['$913E', '$913B'], rawInstructionBytesSaved: 6,
-    skipBranchBytes: 2, usableBytesRecovered: 4, spareRange: '$FE35-$FE38' },
+    skipBranchBytes: 2, usableBytesRecovered: 4, recoveredRange: '$FE35-$FE38', nowUsedFor: 'PAL text' },
+  regionDisplay: { row: 3, column: 6, labels: ['PAL', 'NTSC'], matchedPairRequired: true },
   ram: { valCleanup: '$02A1-$02A4', regionFlag: '$02A6 (sign bit PAL=1, NTSC=0)' } };
 const git = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' });
 if (git.status !== 0) throw new Error('Cannot determine source commit');

@@ -30,11 +30,13 @@ approximate RGB colours and a visible cursor blink phase.
 ### Experimental PAL/NTSC Pair
 
 An **8 KB universal KERNAL** and matching 8 KB BASIC are available for testing.
-Experiment 2 uses verified shared-VIA writes to recover four usable ROM bytes;
+Experiment 3 adds a blue PAL/NTSC label beneath the memory count without moving
+the heading, rainbow, READY or typing rows. Both ROMs change: install the new pair.
+Experiment 2 used verified shared-VIA writes to recover four usable ROM bytes;
 simulated PAL/NTSC boot tests now cover ten expansion-memory layouts.
 The stable PAL ROMs above are unchanged. Use both experimental images together;
 do not mix them with the stable patched BASIC or KERNAL.
-Experiment 1 remains downloadable; its BASIC is byte-identical to Experiment 2.
+Experiments 1/2 remain downloadable; neither BASIC should be used with Experiment 3.
 
 The universal build detects the video chip's raster timing, then selects the
 regional screen origin, 60 Hz system timer and RS-232 constants. It retains the
@@ -87,7 +89,7 @@ benefit little or incur comparison overhead.
 | --- | --- |
 | `src/` | Complete commented assembly and linker configuration |
 | `roms/` | Patched 8 KB BASIC and KERNAL, plus combined 16 KB image |
-| `reference/` | Original disassembly and unmodified production ROMs |
+| `reference/` | Original disassembly, production ROMs and immutable regression fixtures |
 | `scripts/build.mjs` | Portable build, address checks and published-ROM comparison |
 | `tests/test_vic20.py` | Focused NMOS 6502 emulator tests |
 | `tests/test_basic.py` | VAL regressions, collector equivalence and cycle samples |

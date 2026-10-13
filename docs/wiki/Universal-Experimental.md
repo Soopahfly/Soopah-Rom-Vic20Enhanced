@@ -1,4 +1,4 @@
-# Universal 8 KB KERNAL: Experiment 2
+# Universal 8 KB KERNAL: Experiment 3
 
 **Experimental, not the stable release.** One 8,192-byte KERNAL detects PAL or
 NTSC. The matching BASIC is also 8,192 bytes. There is no bank switching or extra
@@ -7,11 +7,12 @@ ROM chip. Keep the original character ROM.
 ## Downloads And Installation
 
 Download the pair from the
-[Experiment 2 prerelease](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/releases/tag/universal-8k-exp2),
+[Experiment 3 prerelease](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/releases/tag/universal-8k-exp3),
 or a successful Actions run's separate `vic20-universal-8k-experimental` artifact.
 The [Experiment 1 download](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/releases/tag/universal-8k-exp1)
-remains available unchanged for comparison. BASIC is byte-identical between the
-two experiments, so Experiment 1's BASIC also works with Experiment 2's KERNAL.
+and [Experiment 2 download](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/releases/tag/universal-8k-exp2)
+remain available unchanged for comparison. Experiment 3 changes both images:
+**install its new BASIC and KERNAL together**, not either earlier BASIC image.
 
 Use `kernal-universal-experimental.bin` as KERNAL and
 `basic-universal-experimental.bin` as BASIC. **Do not mix this pair with the stable
@@ -41,14 +42,38 @@ To inspect detection in BASIC, `PRINT PEEK(678)` reads the region byte at $02A6:
 values 128 or higher indicate PAL; values below 128 indicate NTSC. Only its sign
 bit is meaningful, so the exact numeric value can vary.
 
+## Experiment 3 Changes
+
+The startup screen now shows **PAL** or **NTSC** in blue on row three, column six
+(zero-based), directly beneath the memory count. The heading, stepped rainbow,
+READY row six and typing row seven remain unchanged in every tested RAM map.
+Five-digit memory counts wrap differently in the stock editor, so the label uses
+the existing PLOT write path to select a fixed position rather than relying on
+the cursor's position after printing the count.
+
+Both ROMs still fit in exactly 8,192 bytes. No extra RAM is allocated. The label
+selector uses BASIC's retired scratch-pop slot; PAL occupies the four bytes
+recovered in Experiment 2, NTSC uses READST's skipped padding, and the print tail
+uses the timer routine's skipped padding. A backward rainbow loop removes its
+row-offset table while preserving all fifteen cells and their colours. It seeds
+carry explicitly and never overflows its row pointers. BASIC's READY message
+starts with CR, which refreshes the editor pointers before input; tests verify
+the cursor stays disabled throughout the intervening boot stage.
+
+All 1,409 original ROM addresses and public vectors remain fixed. The label and
+drawing code are commented. Correctness fixes and the stock collector are
+unchanged. Because the selector is now in BASIC, earlier experimental BASIC
+images cannot be paired with this KERNAL. The full Experiment 1 KERNAL is retained
+as a hash-verified regression fixture for independent IOINIT comparison.
+
 ## Experiment 2 Changes
 
 The KERNAL remains exactly 8,192 bytes. Two pairs of identical VIA setup writes
 are replaced with one shared write each: $913E clears both interrupt-enable
 registers and $913B sets both auxiliary-control registers to $40. No shared
 reads are used. Six instruction bytes are removed; a two-byte branch skips the
-new padding, leaving four usable spare bytes at $FE35-$FE38. All original label
-addresses stay fixed. The spare bytes are reserved, not a new BASIC command.
+new padding, recovering four usable bytes at $FE35-$FE38. Experiment 3 uses
+those bytes for the PAL string. All original label addresses stay fixed.
 
 The branch is safe because the preceding serial-clock routine ORs bit 1 into A,
 leaving Z clear. It also prevents running the padding. A repeatable frozen-raster
@@ -111,15 +136,15 @@ their addresses. Public jump slots and hardware vectors are regression-tested.
 - The collector self-copy speed-up is omitted. Collection uses the stock mover;
   correctness fixes, the VAL repair and the stepped screen remain included.
 
-All region-selection helpers are in KERNAL. BASIC contains the relocated VAL
-conversion/error cleanup and must be installed from this same experimental pair.
+Hardware detection/timing helpers remain in KERNAL. BASIC contains the mode-text
+selector and relocated VAL cleanup; install this same experimental pair.
 Stable `src/vic20-fixed.s`, `roms/` and all eight PAL permutations are unchanged.
 The experimental Actions option currently builds this one fully patched layout,
 not eight additional universal permutations.
 
 ## Verification And Risks
 
-Simulated NMOS 6502 tests pass: 2,342 universal cases, 2,275 core regressions and
+Simulated NMOS 6502 tests pass: 2,382 universal cases, 2,275 core regressions and
 193 BASIC cases. This includes every PAL/NTSC raster phase, initial interlace,
 frozen raster, register contracts, all baud codes, the actual receive-start
 lookup, standard/custom keyboard tables, and reset-to-READY with typing in both

@@ -31,18 +31,10 @@ CONFIGS = {
     'blk2-only': (False, (2,), 3583),
     'blk5-only': (False, (5,), 3583),
 }
-# Verified bytes from the immutable universal-8k-exp1 ROM, $FDF9..$FE38.
-# Keep the baseline independent of the new assembler output and VIA modelling.
-EXP1_IOINIT = bytes.fromhex(
-    'A97F8D1E918D2E91A9408D2B918D1B91A9FE8D1C91A9DE8D2C91'
-    'A2008E12918E23918E1F910820F6F028CA8E2291A2808E1391A200'
-    '2084EFA9828D1E91208DEF')
-assert len(EXP1_IOINIT) == 64
-exp1 = bytearray(ROM)
-exp1[0x3DF9:0x3E39] = EXP1_IOINIT
-EXP1 = bytes(exp1)
-assert hashlib.sha256(EXP1[8192:]).hexdigest() == 'a036a393263a3a12a3b1779b3fbcd3c704cea2c3d27d7534451ebba00acc974a'
-assert hashlib.sha256(ROM[:8192]).hexdigest() == 'acae764369d325bb61b50974fb680dd9e79ad7d37392b8a3cb144fc55c977897'
+# Immutable released KERNAL, independent of the current generator and model.
+exp1_kernel = (ROOT / 'reference/kernal-universal-exp1.bin').read_bytes()
+assert hashlib.sha256(exp1_kernel).hexdigest() == 'a036a393263a3a12a3b1779b3fbcd3c704cea2c3d27d7534451ebba00acc974a'
+EXP1 = STABLE[:8192] + exp1_kernel
 NTSC_WORDS = [0x2792, 0x1A40, 0x11C6, 0x0E74, 0x0CEE, 0x0645,
               0x02F1, 0x0146, 0x00B8, 0x0071, 0x002A]
 prefix = SYMBOLS['UNI_NTSC_PREFIX'] - 0xC000
@@ -184,13 +176,13 @@ for flags in (0x20, 0x21, 0x60, 0x6D):
                              for target in targets if target & 0xFFF0 == base]
                             for trace in traces]
                 assert per_chip[0] == per_chip[1]
-            ioinit_cycles = {'experiment1': cycles[0], 'experiment2': cycles[1],
+            ioinit_cycles = {'experiment1': cycles[0], 'experiment3': cycles[1],
                              'cyclesSaved': 5, 'raster': 'frozen at zero for repeatable comparison'}
             count += 1
 record('IOINIT matches Experiment 1 across flags, prior VIA states and video origins', count)
 assert SYMBOLS['UNI_IOINIT_SPARE'] == 0xFE35
-assert ROM[0x3E35:0x3E39] == b'\xEA'*4
-record('Four recovered bytes are skipped, with FE39 still at its stock address', 1)
+assert ROM[0x3E35:0x3E39] == b'PAL\0'
+record('Recovered bytes hold skipped PAL text, with FE39 still at its stock address', 1)
 
 
 max_cycles = {}
@@ -319,6 +311,8 @@ for region in ('PAL', 'NTSC'):
     for config, (_, blocks, free_bytes) in CONFIGS.items():
         for phase in (0, 130):
             cpu, mem = machine(0xFD22, RasterMemory(region, phase, config=config))
+            run(cpu, stop=0xC644)
+            assert mem[0xCC] != 0 and mem[0xD6] == 5, 'Cursor must stay disabled before READY'
             run(cpu, stop=0xE5E8)
             base = mem[0x288] << 8
             assert base == (0x1000 if 1 in blocks else 0x1E00), config
@@ -331,7 +325,11 @@ for region in ('PAL', 'NTSC'):
             assert bytes(mem[base+132:base+138]) == bytes([18, 5, 1, 4, 25, 46])
             assert (mem[0xD3], mem[0xD6]) == (0, 7)
             colour = 0x9400 | (base & 0x300)
-            assert (bytes(mem[base:base+506]), bytes(mem[colour:colour+506])) == baseline_screens[config]
+            expected_screen, expected_colours = map(bytearray, baseline_screens[config])
+            mode = bytes(ord(c) & 0x3F for c in region)
+            expected_screen[72:72+len(mode)] = mode
+            expected_colours[72:72+len(mode)] = bytes([6])*len(mode)
+            assert (bytes(mem[base:base+506]), bytes(mem[colour:colour+506])) == (expected_screen, expected_colours), (region, config)
             before = bytes(mem[base:base+506])
             cpu, mem = machine(0xFFD2, mem, a=ord('A'))
             run(cpu)
@@ -340,6 +338,7 @@ for region in ('PAL', 'NTSC'):
             assert bytes(mem[base:base+154]) == before[:154]
             count += 1
 record('Reset to READY and typed character in both regions and RAM layouts', count)
+record('Cursor remains disabled until READY refreshes the editor pointers', count)
 
 setup_cycles = {}
 for name, image, flag in [('Stock PAL', STABLE[:8192]+PAL, 0x80),
@@ -349,7 +348,7 @@ for name, image, flag in [('Stock PAL', STABLE[:8192]+PAL, 0x80),
     run(cpu, stop=0xFF46)
     setup_cycles[name] = cpu.processorCycles
 
-report = {'experimental': True, 'experiment': 2, 'allPassed': True, 'cases': sum(COUNTS.values()),
+report = {'experimental': True, 'experiment': 3, 'allPassed': True, 'cases': sum(COUNTS.values()),
           'tests': COUNTS, 'maximumDetectionCycles': max_cycles,
           'receiveStartTimerSetupCycles': setup_cycles,
           'ioinitCycles': ioinit_cycles,

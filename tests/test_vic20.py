@@ -103,6 +103,10 @@ for screen_base in (0x1000, 0x1E00):
     mem[screen_base:screen_base+506] = [0x20] * 506
     mem[colour_base:colour_base+506] = [6] * 506
     mem[0xD3], mem[0xD6], mem[0x286] = 0, 3, 6
+    if EXPERIMENTAL:
+        mem[0x2A6] = 0x80
+        mem[0x326], mem[0x327], mem[0x9A], mem[0xD5] = 0x7A, 0xF2, 3, 21
+        mem[0xCC] = 12
     for row in range(24):
         mem[0xD9+row] = 0x80 | ((row*22) >> 8)
     expected_screen = list(mem[screen_base:screen_base+506])
@@ -111,6 +115,8 @@ for screen_base in (0x1000, 0x1E00):
         assert offset % 22 < 5 and offset // 22 < 5
         expected_screen[offset] = glyph_value
         expected_colours[offset] = colour
+    if EXPERIMENTAL:
+        expected_screen[72:75] = [16,1,12]
     # An IRQ keyboard scan can update F5/F6 between any drawing instructions.
     for _ in range(20000):
         if cpu.pc == 0xC644:
@@ -121,7 +127,7 @@ for screen_base in (0x1000, 0x1E00):
         raise AssertionError('Startup drawing did not finish')
     assert mem[screen_base:screen_base+506] == expected_screen
     assert mem[colour_base:colour_base+506] == expected_colours
-    assert (mem[0xD3], mem[0xD6], mem[0x286]) == (0,5,6)
+    assert (mem[0xD3], mem[0xD6], mem[0x286]) == (9 if EXPERIMENTAL else 0,5,6)
     assert cpu.sp == 0xFD, 'Startup helper altered the return stack'
 record('Left-hand stepped rainbow and editor pointers on both screen bases', 2)
 
@@ -177,6 +183,9 @@ for expanded in (False, True):
     expected_colours[50:66] = memory_colours
     expected_colours[88:94] = [1]*6
     expected_colours[132:138] = ready_colours
+    if EXPERIMENTAL:
+        expected_screen[72:75] = [16,1,12]
+        expected_colours[72:75] = [6]*3
     for offset, glyph_value, colour in zip(rainbow_offsets, rainbow_glyphs, rainbow_colours):
         expected_screen[offset] = glyph_value
         expected_colours[offset] = colour

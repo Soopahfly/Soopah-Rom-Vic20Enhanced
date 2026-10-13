@@ -1,5 +1,24 @@
 # Changelog
 
+## Universal 8 KB Experiment 3 - 2026-10-13
+
+- Display the detected PAL/NTSC mode in blue at row three, column six.
+- Use a fixed editor position so five-digit memory counts cannot move the label.
+- Preserve the V2.26 heading, all fifteen rainbow cells, colours, READY and typing rows.
+- Fit the selector into BASIC's retired scratch-pop slot, strings into skipped
+  KERNAL padding and the print tail into retired timer space.
+- Tighten the rainbow loop to draw backwards and remove its row-offset table.
+  Seed pointer-increment carry explicitly and retain original public addresses.
+- Let READY's initial CR update the line pointers; test the cursor remains disabled
+  until then and typing still reaches the correct screen/colour RAM locations.
+- Keep both ROMs at 8,192 bytes and all 1,409 original addresses and vectors fixed.
+- Change both BASIC and KERNAL: Experiment 3 must be installed as its own pair.
+- Keep all correctness fixes, stock collector behaviour and RS-232 caveats unchanged.
+- Pass 2,382 universal simulated cases, 2,275 core cases and 193 BASIC cases,
+  including whole-screen/colour comparisons with only the mode label added.
+- Preserve Experiments 1/2 and stable ROMs; supply separate new download images.
+- VICE, physical machines and end-to-end peripheral tests remain outstanding.
+
 ## Universal 8 KB Experiment 2 - 2026-10-13
 
 - Verify shared VIA selection against early and cost-reduced Commodore schematics
