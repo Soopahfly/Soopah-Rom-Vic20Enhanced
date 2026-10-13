@@ -2,7 +2,9 @@
 
 **Experimental, not the stable release.** One 8,192-byte KERNAL detects PAL or
 NTSC. The matching BASIC is also 8,192 bytes. There is no bank switching or extra
-ROM chip. Keep the original character ROM.
+ROM chip. Stock CHARGEN remains the default; the independent optional
+[Character Fonts](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/wiki/Character-Fonts)
+can be used without changing the required BASIC/KERNAL pairing.
 
 ## Downloads And Installation
 
@@ -138,7 +140,8 @@ their addresses. Public jump slots and hardware vectors are regression-tested.
 
 Hardware detection/timing helpers remain in KERNAL. BASIC contains the mode-text
 selector and relocated VAL cleanup; install this same experimental pair.
-Stable `src/vic20-fixed.s`, `roms/` and all eight PAL permutations are unchanged.
+Stable `src/vic20-fixed.s`, BASIC/KERNAL images and all eight PAL permutations
+are unchanged. Optional fonts are separate files in `roms/chargen/`.
 The experimental Actions option currently builds this one fully patched layout,
 not eight additional universal permutations.
 
@@ -151,7 +154,12 @@ lookup, standard/custom keyboard tables, and reset-to-READY with typing in both
 regions and all ten RAM layouts. Worst-case detector times in the model are 22,176 PAL
 cycles and 16,998 NTSC cycles, approximately one frame.
 
-**Not tested in VICE or on physical hardware.** Synthetic raster/VIA behaviour
+**Limited user-supplied PAL startup evidence in VICE; no physical testing.**
+Screenshots on 2026-10-13 show the PAL label, 28159 bytes free and both original
+smooth-tip fonts, with clean 5x7 also shown in mixed-case mode. Exact ROM hashes
+and emulator configuration were not independently verified. NTSC startup,
+general compatibility and the new uppercase striped-tip fonts remain unverified.
+Synthetic raster/VIA behaviour
 does not validate all peripherals. Autostart cartridges can bypass normal KERNAL
 initialisation; cartridge compatibility is not established.
 

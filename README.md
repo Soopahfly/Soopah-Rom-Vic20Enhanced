@@ -72,8 +72,12 @@ of previously unused system RAM, without reducing BASIC's reported free memory.
 
 See [the experimental build and VICE instructions](docs/wiki/Universal-Experimental.md)
 and [GitHub prereleases](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/releases).
-Simulated tests pass; VICE, physical machines and real serial devices remain
-unverified. RS-232 interrupt setup is slower and needs particular attention.
+Simulated tests pass. User-supplied VICE screenshots show PAL-labelled startup,
+28159 bytes free and both original smooth-tip fonts; clean 5x7 was also shown in
+mixed-case mode. This is limited visual evidence, not a recorded full test run
+or verification of the exact emulator configuration. NTSC startup, physical
+machines and real serial devices remain unverified. RS-232 interrupt setup is
+slower and needs particular attention.
 
 ### Stable PAL Corrections
 
@@ -114,7 +118,7 @@ benefit little or incur comparison overhead.
 | Location | Contents |
 | --- | --- |
 | `src/` | Complete commented assembly and linker configuration |
-| `roms/` | Patched 8 KB BASIC and KERNAL, plus combined 16 KB image |
+| `roms/` | Patched 8 KB BASIC and KERNAL, combined 16 KB image, optional 4 KB fonts in `chargen/` |
 | `reference/` | Original disassembly, production ROMs and immutable regression fixtures |
 | `scripts/build.mjs` | Portable build, address checks and published-ROM comparison |
 | `tests/test_vic20.py` | Focused NMOS 6502 emulator tests |

@@ -53,3 +53,15 @@ switches retains the entire original screen.
 
 Free memory is calculated normally. V2.26 is a build identifier, not a new
 BASIC language or token set.
+
+## Optional Character Fonts
+
+Four independent 4096-byte CHARGEN downloads are available on main: clean 5x7
+and compact 5x6, each with smooth or striped uppercase rainbow tips. They redraw
+uppercase, digits and full stop with matching inverse characters. Lowercase
+remains stock. Smooth variants match the original published fonts exactly;
+striped variants additionally change graphics $69/$E9. They do not alter BASIC,
+KERNAL, character-cell size, screen positions or available program memory.
+
+See [Character Fonts](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/wiki/Character-Fonts)
+for downloads, previews, checksums and the limited VICE testing status.

@@ -22,6 +22,12 @@ before installing it. Stable PAL artifacts and all eight combinations are unchan
 
 ## Options
 
+Optional CHARGEN fonts are separate downloads, not Actions switches. Select
+clean 5x7 or compact 5x6 with smooth or striped uppercase rainbow tips from
+[Character Fonts](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/wiki/Character-Fonts).
+They can accompany any BASIC/KERNAL variant; they do not enable fixes or change
+the rainbow layout. Actions artifacts continue to contain BASIC/KERNAL only.
+
 | Switch | On | Off |
 | --- | --- | --- |
 | Fixes | Six KERNAL fixes and both BASIC changes | Original behaviour, including bugs |

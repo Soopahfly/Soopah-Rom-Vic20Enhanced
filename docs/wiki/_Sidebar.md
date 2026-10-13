@@ -1,5 +1,6 @@
 - [Home](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/wiki)
 - [Building ROMs](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/wiki/Building-ROMs)
 - [Patch Notes](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/wiki/Patch-Notes)
+- [Character Fonts](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/wiki/Character-Fonts)
 - [Compatibility And Testing](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/wiki/Compatibility-And-Testing)
 - [Universal Experimental](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/wiki/Universal-Experimental)

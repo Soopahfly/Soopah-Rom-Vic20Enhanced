@@ -38,11 +38,11 @@ These images render ROM-produced screen RAM, not captured VICE screenshots.
 
 ![Stock CHARGEN startup screen](chargen/stock.png)
 
-**Clean 5x7**
+**Clean 5x7, Striped Tips**
 
 ![Clean 5x7 CHARGEN startup screen](chargen/clean-5x7.png)
 
-**Compact 5x6**
+**Compact 5x6, Striped Tips**
 
 ![Compact 5x6 CHARGEN startup screen](chargen/compact-5x6.png)
 
@@ -81,9 +81,9 @@ blink phase. This is not a VICE screenshot or an analogue-video simulation.
 
 The builder asserts 4096-byte output, restricts modifications to the declared
 glyph slots, and checks each changed inverse against its normal character.
-The previous versions of both fonts were user-tested at PAL startup in VICE,
+Both original smooth-tip fonts were user-tested at PAL startup in VICE,
 with the clean font also shown in mixed-case mode. The updated uppercase striped
-tips have not yet been tested in VICE. Neither version has been physically tested;
+tips have not yet been tested in VICE. None of the four files has been physically tested;
 the screenshots do not establish general software compatibility.
 
 Published files and SHA256 checksums are in `roms/chargen/`. The main README

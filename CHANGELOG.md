@@ -1,5 +1,14 @@
 # Changelog
 
+## Documentation Refresh - 2026-10-13
+
+- Add a wiki font page with all four downloads, both tip-style comparisons,
+  checksums, rebuilding instructions and compatibility limits.
+- Update wiki navigation, installation, build choices and patch notes so stock
+  CHARGEN is a default rather than a requirement.
+- Record the user's limited PAL VICE startup screenshots without claiming NTSC,
+  full compatibility, exact emulator configuration or physical validation.
+
 ## Keep Both CHARGEN Tip Styles - 2026-10-13
 
 - Restore the original clean 5x7 and compact 5x6 fonts as `-smooth.bin` downloads.

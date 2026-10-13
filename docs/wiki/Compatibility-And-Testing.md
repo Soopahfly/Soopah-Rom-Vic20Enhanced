@@ -2,8 +2,11 @@
 
 ## Installation
 
-Target: PAL KERNAL 901486-07 and BASIC 901486-01. No NTSC build is supplied.
-Keep the original character ROM and backups of your originals. Use both 8 KB
+Stable target: PAL KERNAL 901486-07 and BASIC 901486-01. NTSC is supported only
+by the separate experimental universal pair, not the stable build.
+Keep backups of your originals. Stock CHARGEN remains the default; optional
+[Character Fonts](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/wiki/Character-Fonts)
+can replace it independently of BASIC/KERNAL. Use both 8 KB
 images from the same variant folder: fixed BASIC calls helpers in its KERNAL.
 The 16 KB combined image is BASIC first, KERNAL second, not an 8 KB chip image.
 
@@ -18,6 +21,9 @@ No Microsoft BASIC-M6502 commands are included.
 - Collector shortcuts and reclaimed padding change instruction timing.
 - Stock checksum diagnostics reject modified images. All-off images match stock.
 - The rainbow writes startup cells, not a permanent overlay.
+- Optional fonts alter text bitmaps; striped versions also change uppercase
+  graphic $69 and its inverse. Bitmap-dependent or checksum-sensitive software
+  may differ. Smooth versions retain stock graphics; lowercase remains stock.
 
 Address preservation does not prove that every program is compatible.
 
@@ -36,6 +42,12 @@ Reset-to-input paths run with expanded and unexpanded RAM maps.
 Tests execute ROM instructions using py65 1.2.0, static I/O and selected VIA
 semantics. These are not full-machine timing or peripheral tests. Physical
 hardware, real tape, real RS-232 and full-machine timing remain unverified.
+
+User-supplied VICE screenshots on 2026-10-13 show the original smooth-tip fonts
+at PAL-labelled startup with 28159 bytes free, and clean 5x7 in mixed-case mode.
+This establishes only the displayed behaviour in those runs, not exact ROM
+hashes, expansion settings, full compatibility or NTSC operation. Updated
+uppercase striped-tip images remain locally checked, not VICE-tested.
 
 ## Provenance
 
