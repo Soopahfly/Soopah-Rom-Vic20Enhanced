@@ -8,6 +8,10 @@ labels, the public KERNAL jump table and hardware vectors retain their addresses
 The BASIC ROM is unchanged. The patched KERNAL includes helper routines in existing
 spare ROM space and a startup banner reading `CBM BASIC V2 - 2026`. Three trailing
 spaces retain the original 22-byte banner field. Colours are unchanged.
+An eleven-cell rainbow occupies the top-right three columns over five rows, with
+its flat edge against the right border. It uses existing character-ROM glyphs and
+the VIC-20's red, yellow, green, cyan and blue colours. Text rows, columns and the
+blue typing cursor retain their normal positions.
 
 ## Corrections
 
@@ -58,7 +62,8 @@ bytes stay within the defined patch ranges.
 After an intentional source change, `node scripts/build.mjs --update-roms` refreshes
 the published ROM files; run the tests before committing those outputs.
 
-All eight test groups pass. They cover the startup banner, status and received-byte values 0-255,
+All ten test groups pass. They cover the startup banner, the rainbow on both
+screen-memory bases, status and received-byte values 0-255,
 filename lengths 0-255, handshake combinations, empty/full queues, pointer wrap,
 direct/program VERIFY modes, and NMI injection at every transmit instruction
 boundary. Each original failure is reproduced before its correction is checked.
@@ -66,7 +71,10 @@ The reported case total includes 1,409 ROM-label checks.
 
 Tests execute real ROM instructions using py65 1.2.0. VIA interrupt-enable
 semantics are modelled, and a synthetic NMI wrapper calls the actual ROM consumer.
-These are routine-level tests, not full VIC-20 peripheral emulation. Full-machine
+These are routine-level tests, not full VIC-20 peripheral emulation.
+The reset-to-input instruction path is also tested with static I/O and unexpanded
+and expanded RAM maps; its text and editor position match the undecorated build.
+This does not model video timing, interrupts or real peripherals. Full-machine
 boot, real tape and real RS-232 operation have not been tested. This build targets
 PAL systems; no NTSC build is supplied. Stock-ROM checksum diagnostics will not
 recognise the modified KERNAL as an original ROM.

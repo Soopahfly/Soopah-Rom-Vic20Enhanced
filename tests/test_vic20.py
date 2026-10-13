@@ -77,6 +77,76 @@ record('ROM labels, public jump table and hardware vectors preserved', label_cou
 assert FIXED[0x2436:0x244F] == b'\x93CBM BASIC V2 - 2026   \r\x00', 'Wrong startup banner'
 record('2026 startup banner fits the original 22-column field', 1)
 
+rainbow_offsets = [19,20,21,41,42,43,64,65,86,87,109]
+rainbow_glyphs = [0x5F,0xA0,0xA0,0x5F,0xA0,0xA0,0x5F,0xA0,0x5F,0xA0,0x5F]
+rainbow_colours = [2,2,2,7,7,7,5,5,3,3,6]
+assert FIXED[0x2426:0x2429] == bytes([0x4C,0x29,0xE9]), 'Missing startup hook'
+for screen_base in (0x1000, 0x1E00):
+    cpu, mem = machine(entry=0xE929)
+    colour_base = 0x9400 | (screen_base & 0x300)
+    mem[0x288] = screen_base >> 8
+    mem[screen_base:screen_base+506] = [0x20] * 506
+    mem[colour_base:colour_base+506] = [6] * 506
+    mem[0xD3], mem[0xD6], mem[0x286] = 0, 3, 6
+    expected_screen = list(mem[screen_base:screen_base+506])
+    expected_colours = list(mem[colour_base:colour_base+506])
+    for offset, glyph_value, colour in zip(rainbow_offsets, rainbow_glyphs, rainbow_colours):
+        assert offset % 22 >= 19 and offset // 22 < 5
+        expected_screen[offset] = glyph_value
+        expected_colours[offset] = colour
+    run(cpu, stops=(0xC644,))
+    assert mem[screen_base:screen_base+506] == expected_screen
+    assert mem[colour_base:colour_base+506] == expected_colours
+    assert (mem[0xD3], mem[0xD6], mem[0x286]) == (0,3,6)
+    assert cpu.sp == 0xFD, 'Startup helper altered the return stack'
+record('Right-hand rainbow cells, colours and editor state on both screen bases', 2)
+
+class BootMemory(Memory):
+    """Only the VIC RAM map and static I/O; no video or interrupt timing."""
+    def __init__(self, rom, expanded):
+        self.expanded = expanded
+        super().__init__(rom)
+
+    def present(self, address):
+        return address < 0x400 or 0x1000 <= address < (0x8000 if self.expanded else 0x2000)
+
+    def __getitem__(self, address):
+        if isinstance(address, int) and not (self.present(address) or 0x9000 <= address < 0x9800 or address >= 0xC000):
+            return 0xFF
+        return super().__getitem__(address)
+
+    def __setitem__(self, address, value):
+        if isinstance(address, int) and not (self.present(address) or 0x9000 <= address < 0x9800):
+            return
+        super().__setitem__(address, value)
+
+
+def boot_to_input(rom, expanded):
+    mem = BootMemory(rom, expanded)
+    cpu = MPU(memory=mem, pc=0xFD22)
+    run(cpu, stops=(0xE5E8,), limit=2000000)
+    base = mem[0x288] << 8
+    return mem, base
+
+
+without_rainbow = bytearray(FIXED)
+without_rainbow[0x2426:0x2429] = ORIGINAL[0x2426:0x2429]
+without_rainbow[0x2929:0x2975] = ORIGINAL[0x2929:0x2975]
+for expanded in (False, True):
+    baseline, base = boot_to_input(without_rainbow, expanded)
+    decorated, decorated_base = boot_to_input(FIXED, expanded)
+    assert decorated_base == base == (0x1000 if expanded else 0x1E00)
+    colour_base = 0x9400 | (base & 0x300)
+    expected_screen = list(baseline[base:base+506])
+    expected_colours = list(baseline[colour_base:colour_base+506])
+    for offset, glyph_value, colour in zip(rainbow_offsets, rainbow_glyphs, rainbow_colours):
+        expected_screen[offset] = glyph_value
+        expected_colours[offset] = colour
+    assert decorated[base:base+506] == expected_screen, 'Startup text or logo differs'
+    assert decorated[colour_base:colour_base+506] == expected_colours
+    assert [decorated[i] for i in (0xD1,0xD2,0xD3,0xD6,0x286)] == [baseline[i] for i in (0xD1,0xD2,0xD3,0xD6,0x286)]
+record('Reset-to-input instruction path preserves text and cursor with/without RAM expansion', 2)
+
 # Status values survive read-and-clear; register and stack contracts are retained.
 for value in range(256):
     cpu, mem = machine(entry=0xFE57)

@@ -8990,7 +8990,7 @@ LAB_E404
 	LDA	#<LAB_E429		; set " BYTES FREE" pointer low byte
 	LDY	#>LAB_E429		; set " BYTES FREE" pointer high byte
 	JSR	LAB_CB1E		; print null terminated string
-	JMP	LAB_C644		; do NEW, CLEAR, RESTORE and return
+	JMP	FIX_BOOT_RAINBOW	; draw the corner accent, then initialise BASIC
 
 
 ;***********************************************************************************;
@@ -10189,14 +10189,38 @@ LAB_E928
 
 ;***********************************************************************************;
 ;
-; code conversion, these don't seem to be used anywhere
-
-;LAB_E929
-	.byte	$EF,$A1,$DF,$A6,$E1,$B1,$E2,$B2,$E3,$B3,$E4,$B4,$E5,$B5,$E6,$B6
-	.byte	$E7,$B7,$E8,$B8,$E9,$B9,$FA,$BA,$FB,$BB,$FC,$BC,$EC,$BD,$FE,$BE
-	.byte	$84,$BF,$F7,$C0,$F8,$DB,$F9,$DD,$EA,$DE,$5E,$E0,$5B,$E1,$5D,$E2
-	.byte	$40,$B0,$61,$B1,$78,$DB,$79,$DD,$66,$B6,$77,$C0,$70,$F0,$71,$F1
-	.byte	$72,$F2,$73,$F3,$74,$F4,$75,$F5,$76,$F6,$7D,$FD
+; Reuse the unreferenced code-conversion table, retaining the next entry at $E975.
+; A three-column accent leaves the 19-character banner and original text rows alone.
+; $5F is the stock diagonal with its flat edge on the right; $A0 is a solid block.
+; Use free KERNAL scratch pointers, not the screen editor's cursor or line pointers.
+FIX_BOOT_RAINBOW
+	LDA	LAB_0288		; screen base changes when RAM expansion is fitted
+	STA	$FC
+	LDY	#$00
+	STY	$FB
+	STY	$FD
+	LDA	$FC
+	AND	#$03
+	ORA	#$94			; derive the matching colour-RAM page
+	STA	$FE
+	LDX	#$0A
+FIX_BOOT_PIXEL
+	LDY	FIX_BOOT_OFFSETS,X
+	LDA	FIX_BOOT_GLYPHS,X
+	STA	($FB),Y
+	LDA	FIX_BOOT_COLOURS,X
+	STA	($FD),Y
+	DEX
+	BPL	FIX_BOOT_PIXEL
+	JMP	LAB_C644		; keep the normal NEW/CLEAR/RESTORE startup path
+FIX_BOOT_OFFSETS
+	.byte	19,20,21,41,42,43,64,65,86,87,109
+FIX_BOOT_GLYPHS
+	.byte	$5F,$A0,$A0,$5F,$A0,$A0,$5F,$A0,$5F,$A0,$5F
+FIX_BOOT_COLOURS
+	.byte	2,2,2,7,7,7,5,5,3,3,6	; red, yellow, green, cyan, blue
+	.assert	* <= $E975, error, "Startup rainbow exceeds unused table space"
+	.res	$E975-*, $FF
 
 
 ;***********************************************************************************;
@@ -16792,6 +16816,7 @@ LAB_FFF3
 .export LAB_E4CF
 .export LAB_E4D7
 .export FIX_READ_STATUS
+.export FIX_BOOT_RAINBOW
 .export FIX_TAPE_NAME
 .export FIX_TAPE_DONE
 .export LAB_E500

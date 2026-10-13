@@ -1,8 +1,8 @@
 {
   "bytes": 16384,
-  "changedBytes": 150,
+  "changedBytes": 227,
   "preservedLabels": 1409,
-  "sha256": "2fff7db7b83747fcb6fb1b499735f379bbc3846cdeff7751fd301bfef9858f71",
+  "sha256": "921ee94d791eb6770c0e2a73d8d130af17151db2b6189f99bdb6f3a2db2e9153",
   "publishedRomsMatch": true,
   "differences": [
     {
@@ -14,6 +14,16 @@
       "address": "$E18B",
       "original": 240,
       "patched": 208
+    },
+    {
+      "address": "$E427",
+      "original": 68,
+      "patched": 41
+    },
+    {
+      "address": "$E428",
+      "original": 198,
+      "patched": 233
     },
     {
       "address": "$E437",
@@ -454,6 +464,381 @@
       "address": "$E4FF",
       "original": 255,
       "patched": 248
+    },
+    {
+      "address": "$E929",
+      "original": 239,
+      "patched": 173
+    },
+    {
+      "address": "$E92A",
+      "original": 161,
+      "patched": 136
+    },
+    {
+      "address": "$E92B",
+      "original": 223,
+      "patched": 2
+    },
+    {
+      "address": "$E92C",
+      "original": 166,
+      "patched": 133
+    },
+    {
+      "address": "$E92D",
+      "original": 225,
+      "patched": 252
+    },
+    {
+      "address": "$E92E",
+      "original": 177,
+      "patched": 160
+    },
+    {
+      "address": "$E92F",
+      "original": 226,
+      "patched": 0
+    },
+    {
+      "address": "$E930",
+      "original": 178,
+      "patched": 132
+    },
+    {
+      "address": "$E931",
+      "original": 227,
+      "patched": 251
+    },
+    {
+      "address": "$E932",
+      "original": 179,
+      "patched": 132
+    },
+    {
+      "address": "$E933",
+      "original": 228,
+      "patched": 253
+    },
+    {
+      "address": "$E934",
+      "original": 180,
+      "patched": 165
+    },
+    {
+      "address": "$E935",
+      "original": 229,
+      "patched": 252
+    },
+    {
+      "address": "$E936",
+      "original": 181,
+      "patched": 41
+    },
+    {
+      "address": "$E937",
+      "original": 230,
+      "patched": 3
+    },
+    {
+      "address": "$E938",
+      "original": 182,
+      "patched": 9
+    },
+    {
+      "address": "$E939",
+      "original": 231,
+      "patched": 148
+    },
+    {
+      "address": "$E93A",
+      "original": 183,
+      "patched": 133
+    },
+    {
+      "address": "$E93B",
+      "original": 232,
+      "patched": 254
+    },
+    {
+      "address": "$E93C",
+      "original": 184,
+      "patched": 162
+    },
+    {
+      "address": "$E93D",
+      "original": 233,
+      "patched": 10
+    },
+    {
+      "address": "$E93E",
+      "original": 185,
+      "patched": 188
+    },
+    {
+      "address": "$E93F",
+      "original": 250,
+      "patched": 81
+    },
+    {
+      "address": "$E940",
+      "original": 186,
+      "patched": 233
+    },
+    {
+      "address": "$E941",
+      "original": 251,
+      "patched": 189
+    },
+    {
+      "address": "$E942",
+      "original": 187,
+      "patched": 92
+    },
+    {
+      "address": "$E943",
+      "original": 252,
+      "patched": 233
+    },
+    {
+      "address": "$E944",
+      "original": 188,
+      "patched": 145
+    },
+    {
+      "address": "$E945",
+      "original": 236,
+      "patched": 251
+    },
+    {
+      "address": "$E947",
+      "original": 254,
+      "patched": 103
+    },
+    {
+      "address": "$E948",
+      "original": 190,
+      "patched": 233
+    },
+    {
+      "address": "$E949",
+      "original": 132,
+      "patched": 145
+    },
+    {
+      "address": "$E94A",
+      "original": 191,
+      "patched": 253
+    },
+    {
+      "address": "$E94B",
+      "original": 247,
+      "patched": 202
+    },
+    {
+      "address": "$E94C",
+      "original": 192,
+      "patched": 16
+    },
+    {
+      "address": "$E94D",
+      "original": 248,
+      "patched": 240
+    },
+    {
+      "address": "$E94E",
+      "original": 219,
+      "patched": 76
+    },
+    {
+      "address": "$E94F",
+      "original": 249,
+      "patched": 68
+    },
+    {
+      "address": "$E950",
+      "original": 221,
+      "patched": 198
+    },
+    {
+      "address": "$E951",
+      "original": 234,
+      "patched": 19
+    },
+    {
+      "address": "$E952",
+      "original": 222,
+      "patched": 20
+    },
+    {
+      "address": "$E953",
+      "original": 94,
+      "patched": 21
+    },
+    {
+      "address": "$E954",
+      "original": 224,
+      "patched": 41
+    },
+    {
+      "address": "$E955",
+      "original": 91,
+      "patched": 42
+    },
+    {
+      "address": "$E956",
+      "original": 225,
+      "patched": 43
+    },
+    {
+      "address": "$E957",
+      "original": 93,
+      "patched": 64
+    },
+    {
+      "address": "$E958",
+      "original": 226,
+      "patched": 65
+    },
+    {
+      "address": "$E959",
+      "original": 64,
+      "patched": 86
+    },
+    {
+      "address": "$E95A",
+      "original": 176,
+      "patched": 87
+    },
+    {
+      "address": "$E95B",
+      "original": 97,
+      "patched": 109
+    },
+    {
+      "address": "$E95C",
+      "original": 177,
+      "patched": 95
+    },
+    {
+      "address": "$E95D",
+      "original": 120,
+      "patched": 160
+    },
+    {
+      "address": "$E95E",
+      "original": 219,
+      "patched": 160
+    },
+    {
+      "address": "$E95F",
+      "original": 121,
+      "patched": 95
+    },
+    {
+      "address": "$E960",
+      "original": 221,
+      "patched": 160
+    },
+    {
+      "address": "$E961",
+      "original": 102,
+      "patched": 160
+    },
+    {
+      "address": "$E962",
+      "original": 182,
+      "patched": 95
+    },
+    {
+      "address": "$E963",
+      "original": 119,
+      "patched": 160
+    },
+    {
+      "address": "$E964",
+      "original": 192,
+      "patched": 95
+    },
+    {
+      "address": "$E965",
+      "original": 112,
+      "patched": 160
+    },
+    {
+      "address": "$E966",
+      "original": 240,
+      "patched": 95
+    },
+    {
+      "address": "$E967",
+      "original": 113,
+      "patched": 2
+    },
+    {
+      "address": "$E968",
+      "original": 241,
+      "patched": 2
+    },
+    {
+      "address": "$E969",
+      "original": 114,
+      "patched": 2
+    },
+    {
+      "address": "$E96A",
+      "original": 242,
+      "patched": 7
+    },
+    {
+      "address": "$E96B",
+      "original": 115,
+      "patched": 7
+    },
+    {
+      "address": "$E96C",
+      "original": 243,
+      "patched": 7
+    },
+    {
+      "address": "$E96D",
+      "original": 116,
+      "patched": 5
+    },
+    {
+      "address": "$E96E",
+      "original": 244,
+      "patched": 5
+    },
+    {
+      "address": "$E96F",
+      "original": 117,
+      "patched": 3
+    },
+    {
+      "address": "$E970",
+      "original": 245,
+      "patched": 3
+    },
+    {
+      "address": "$E971",
+      "original": 118,
+      "patched": 6
+    },
+    {
+      "address": "$E972",
+      "original": 246,
+      "patched": 255
+    },
+    {
+      "address": "$E973",
+      "original": 125,
+      "patched": 255
+    },
+    {
+      "address": "$E974",
+      "original": 253,
+      "patched": 255
     },
     {
       "address": "$EFF5",

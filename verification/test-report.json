@@ -1,8 +1,8 @@
 {
   "emulator": "py65 1.2.0, NMOS 6502",
   "scope": "Focused ROM-routine tests; VIA IER semantics modelled; no full VIC-20 peripheral emulation",
-  "testGroups": 8,
-  "cases": 2271,
+  "testGroups": 10,
+  "cases": 2275,
   "results": [
     {
       "test": "ROM labels, public jump table and hardware vectors preserved",
@@ -12,6 +12,16 @@
     {
       "test": "2026 startup banner fits the original 22-column field",
       "cases": 1,
+      "passed": true
+    },
+    {
+      "test": "Right-hand rainbow cells, colours and editor state on both screen bases",
+      "cases": 2,
+      "passed": true
+    },
+    {
+      "test": "Reset-to-input instruction path preserves text and cursor with/without RAM expansion",
+      "cases": 2,
       "passed": true
     },
     {
