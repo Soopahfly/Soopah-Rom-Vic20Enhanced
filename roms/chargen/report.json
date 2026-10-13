@@ -11,16 +11,17 @@
     {
       "name": "clean-5x7",
       "bytes": 4096,
-      "modifiedGlyphSlots": 148,
-      "sha256": "4e8e9dd0c94c2686cbda5d548b8059bc612a2c3fcb709143c01a2a45f0b3f51d"
+      "modifiedGlyphSlots": 150,
+      "sha256": "b1b3ea962866e105c92c432c18717980d09142fd0efce390b1022e4f3af1848b"
     },
     {
       "name": "compact-5x6",
       "bytes": 4096,
-      "modifiedGlyphSlots": 148,
-      "sha256": "7bab69cb72091508f084eee83dc925f640952b42ef7b8e716e38b41aa892198c"
+      "modifiedGlyphSlots": 150,
+      "sha256": "fb5e6aeca17c1e0eb98ab220dedffe3b1a8edda89b5129f7f66f0dc448284e31"
     }
   ],
   "startup": "stable PAL",
-  "limitations": "ROM-executed screen; approximate colours, no VICE/hardware test. Uppercase, digits and full stop changed; lowercase and other punctuation remain stock."
+  "rainbow": "Uppercase screen code $69 uses stock mixed-case diagonal stripes, with matching inverse.",
+  "limitations": "ROM-executed screen; approximate colours. Previous font versions were user-tested at PAL startup in VICE; updated uppercase striped tips are not yet VICE/hardware-tested. Lowercase and other punctuation remain stock."
 }

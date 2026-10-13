@@ -12,7 +12,12 @@ BASIC memory or KERNAL ROM space.
 Both retain eight-by-eight character cells, 22 screen columns and the existing
 startup positions. They change A-Z, 0-9 and the full stop in both character
 banks, together with their reverse-video partners. Lowercase letters, all other
-punctuation, PETSCII graphics, spaces, cursor and rainbow shapes remain stock.
+punctuation, other PETSCII graphics, spaces, cursor and solid rainbow blocks remain stock.
+Uppercase screen code `$69` now uses the stock mixed-case diagonal stripe tile,
+matching the rainbow tips the user preferred in VICE. Its reverse-video partner
+is updated too. This is a full patterned tile rather than a triangular wedge;
+the white gaps show the screen background. Its appearance also changes wherever
+other software uses that uppercase/graphics character.
 The mixed-case font is therefore deliberately unfinished: lowercase remains
 the original design.
 
@@ -61,7 +66,10 @@ blink phase. This is not a VICE screenshot or an analogue-video simulation.
 
 The builder asserts 4096-byte output, restricts modifications to the declared
 glyph slots, and checks each changed inverse against its normal character.
-Neither ROM has been tested in VICE or on physical hardware.
+The previous versions of both fonts were user-tested at PAL startup in VICE,
+with the clean font also shown in mixed-case mode. The updated uppercase striped
+tips have not yet been tested in VICE. Neither version has been physically tested;
+the screenshots do not establish general software compatibility.
 
 Published files and SHA256 checksums are in `roms/chargen/`. The main README
 links directly to both images. No experimental BASIC/KERNAL pair is required

@@ -1,5 +1,15 @@
 # Changelog
 
+## Striped CHARGEN Rainbow Tips - 2026-10-13
+
+- Give both optional fonts the stock mixed-case diagonal stripe tile at uppercase
+  screen code $69, with a matching inverse at $E9. Retain the mixed-case tile.
+- Match the textured rainbow tips preferred in the user's VICE screenshot.
+- Keep all text glyphs, other graphics, stock CHARGEN, BASIC and KERNAL unchanged.
+- Refresh both main downloads, checksums and stable startup previews.
+- Previous font versions were user-tested at PAL startup in VICE. This new
+  uppercase glyph change is locally checked, not yet VICE- or hardware-tested.
+
 ## Optional CHARGEN Fonts - 2026-10-13
 
 - Add clean 5x7 and compact 5x6 character ROMs to the main download section.

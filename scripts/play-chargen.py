@@ -68,6 +68,17 @@ def make_rom(stock, glyphs, height):
                 bitmap = bytes(row ^ (255 if reverse else 0) for row in rows)
                 result[offset:offset+8] = bitmap
                 allowed.update(range(offset, offset+8))
+    # Reuse the stock mixed-case diagonal stripes seen in the user's VICE
+    # screen. CHARGEN cannot colour individual pixels: gaps use the background.
+    # Code $69 is a full patterned tile, not a striped triangular wedge.
+    striped_tip = stock[2048+0x69*8:2048+0x6A*8]
+    assert striped_tip == bytes.fromhex('993366CC993366CC')
+    for reverse in (0,128):
+        offset = (0x69+reverse)*8
+        result[offset:offset+8] = bytes(v ^ (255 if reverse else 0) for v in striped_tip)
+        allowed.update(range(offset,offset+8))
+    assert result[0x69*8:0x6A*8] == result[2048+0x69*8:2048+0x6A*8]
+    assert result[0xA0*8:0xA1*8] == stock[0xA0*8:0xA1*8]  # Solid rainbow blocks.
     assert len(result) == 4096
     assert all(a == b or i in allowed for i, (a,b) in enumerate(zip(stock,result)))
     for bank in (0,2048):
@@ -134,7 +145,8 @@ def main():
     report = {'source':'https://www.zimmers.net/anonftp/pub/cbm/firmware/characters/vic20.bin',
               'stockSha256':hashlib.sha256(stock).hexdigest(), 'variants':[],
               'startup':'universal PAL fallback' if args.universal else 'stable PAL',
-              'limitations':'ROM-executed screen; approximate colours, no VICE/hardware test. Uppercase, digits and full stop changed; lowercase and other punctuation remain stock.'}
+              'rainbow':'Uppercase screen code $69 uses stock mixed-case diagonal stripes, with matching inverse.',
+              'limitations':'ROM-executed screen; approximate colours. Previous font versions were user-tested at PAL startup in VICE; updated uppercase striped tips are not yet VICE/hardware-tested. Lowercase and other punctuation remain stock.'}
     for index,(name,rom,count) in enumerate(variants):
         preview = render(rom,memory,base)
         preview.save(OUT / f'{name}.png')

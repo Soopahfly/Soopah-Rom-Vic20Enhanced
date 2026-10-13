@@ -36,11 +36,14 @@ independently of the experimental PAL/NTSC builds:
 ![Stock, clean and compact fonts on the stable startup screen](docs/chargen-comparison.png)
 
 Select one as the character ROM, leaving BASIC and KERNAL unchanged. Both retain
-the screen layout and PETSCII graphics, including the rainbow. They redraw
+the screen layout and solid rainbow blocks. They redraw
 uppercase letters, digits and the full stop; lowercase and other punctuation
-remain stock. Smaller-looking letters do not add columns or free memory.
+remain stock. The rainbow tips use the stock mixed-case diagonal stripe tile
+in uppercase mode too; its reverse-video partner is updated to match.
+Other PETSCII graphics remain unchanged. Smaller-looking letters do not add columns or free memory.
 Stock CHARGEN remains the default. Appearance and checksum-sensitive software
-can be affected; neither font is VICE- or hardware-tested yet.
+can be affected. The previous fonts were user-tested at PAL startup in VICE;
+these updated uppercase striped tips have not yet been VICE- or hardware-tested.
 See [font notes, checksums and rebuilding](docs/chargen-fonts.md).
 
 ## Corrections
