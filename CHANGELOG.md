@@ -1,5 +1,18 @@
 # Changelog
 
+## Experiment 3 Stock-Screen Variant - 2026-10-14
+
+- Add an independent 8 KB universal pair with the original starred BASIC V2
+  heading, no rainbow, stock memory/READY/input rows and a PAL/NTSC label on row 3.
+- Keep every Experiment 3 feature, fix, RAM reservation and timing caveat.
+- Preserve all 1409 original ROM addresses; BASIC matches rainbow Experiment 3.
+- Assert only three screen-code/data ranges differ from the rainbow build.
+- Test stock screen/colour equivalence plus region label and typing in PAL/NTSC
+  across ten RAM maps; pass 2382 universal and 193 BASIC simulated cases.
+- Add separate Actions artifact, downloads, commented assembly and wiki notes.
+- Existing rainbow Experiment 3 and stable PAL images remain unchanged.
+- New variant is not yet tested in VICE or physically.
+
 ## Documentation Refresh - 2026-10-13
 
 - Add a wiki font page with all four downloads, both tip-style comparisons,

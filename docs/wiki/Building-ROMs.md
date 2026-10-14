@@ -15,7 +15,10 @@ automatically produce all eight combinations.
 
 The additional **universal_experimental** switch builds the experimental PAL/NTSC
 pair as a separate `vic20-universal-8k-experimental` artifact. Automatic builds
-also test that pair. It currently includes the fixes, rainbow and V2.26 heading;
+also produce `vic20-universal-8k-stock-screen` for the independent Experiment 3
+stock layout with a PAL/NTSC label. Both universal choices retain the same fixes;
+see [Stock Screen](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/wiki/Universal-Stock-Screen).
+Automatic builds test both pairs. The rainbow pair includes the fixes, rainbow and V2.26 heading;
 the three stable switches do not change the experimental image. Read
 [Universal Experimental](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/wiki/Universal-Experimental)
 before installing it. Stable PAL artifacts and all eight combinations are unchanged.

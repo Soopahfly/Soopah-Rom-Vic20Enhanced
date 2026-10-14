@@ -6,7 +6,10 @@ import crypto from 'node:crypto';
 
 // Experimental paired ROMs only. Never overwrite the stable source or images.
 const root = fileURLToPath(new URL('../', import.meta.url));
-const out = path.join(root, 'build/universal');
+const args = process.argv.slice(2);
+if (args.some(arg => arg !== '--screen=stock')) throw new Error('Supported option: --screen=stock');
+const stockScreen = args.includes('--screen=stock');
+const out = path.join(root, stockScreen ? 'build/universal-stock' : 'build/universal');
 fs.mkdirSync(out, { recursive: true });
 let source = fs.readFileSync(path.join(root, 'src/vic20-fixed.s'), 'utf8').replaceAll('\r\n', '\n');
 function replace(old, value) {
@@ -80,7 +83,18 @@ UNI_VIDEO_STORE
     RTS
 ${pad('E815')}`);
 replace('\tSTA\tLAB_9000-1,X\t; save byte to Vic chip', '\tJSR UNI_VIDEO ; PAL or NTSC origin, other VIC registers unchanged');
-region('FIX_BOOT_RAINBOW', 'FIX_BOOT_HEADING', `FIX_BOOT_RAINBOW
+region('FIX_BOOT_RAINBOW', 'FIX_BOOT_HEADING', stockScreen ? `FIX_BOOT_RAINBOW
+; Stock layout: label the blank row without moving READY or the input cursor.
+; PLOT's write entry ignores carry; both calls recalculate editor pointers.
+    LDX #3
+    LDY #0
+    JSR LAB_E50A+2
+    JSR UNI_SHOW_REGION
+    LDX #3
+    LDY #0
+    JSR LAB_E50A+2
+    JMP LAB_C644
+${pad('E96D')}` : `FIX_BOOT_RAINBOW
     LDX #3
     LDY #6
     JSR LAB_E50A+2      ; PLOT's write path: fixed row despite memory-count wrapping
@@ -306,6 +320,11 @@ source = source.slice(0, unusedVectorBytes) + 'UNI_ORIGINS\n\t.byte $05,$19,$FF,
 for (const obsolete of ['FIX_VAL_SAVE_SCRATCH', 'FIX_VAL_NORMAL']) replace(`.export ${obsolete}\n`, '');
 region('FIX_GC_MOVE', 'LAB_DF71', basicVal);
 source += '\nUNI_REGION = $02A6\n.export UNI_REGION, UNI_DETECT, UNI_DETECT_PRESERVE, UNI_VIDEO, UNI_TICK, UNI_BAUD_BYTE, UNI_BAUD_HIGH, UNI_KEY_READ, UNI_NTSC_PREFIX, UNI_IOINIT_SPARE, UNI_SHOW_REGION, UNI_PRINT_REGION\n';
+if (stockScreen) {
+  replace('\tJSR\tFIX_BOOT_HEADING\t\t; print heading and align the following memory count', '\tJSR LAB_CB1E ; original heading and memory-count alignment');
+  const original = fs.readFileSync(path.join(root, 'reference/kernal.901486-07.bin'));
+  region('LAB_E436', 'LAB_E44F', `LAB_E436\n; Original production heading, including framing stars and line behaviour.\n    .byte ${[...original.subarray(0x436, 0x44f)].map(b => '$' + b.toString(16).padStart(2, '0')).join(',')}`);
+}
 const generated = path.join(out, 'vic20-universal.s');
 fs.writeFileSync(generated, '; EXPERIMENT 3: region label; use the matching experimental ROM pair.\n' + source);
 function run(name, args) {
@@ -334,6 +353,7 @@ const allowed = [[0xd629,0xd62c], [0xd7cf,0xd7e2], [0xdf53,0xdf71], [0xe40f,0xe4
   [0xed69,0xede4], [0xf0f6,0xf102], [0xf272,0xf279],
   [0xf4f6,0xf4f9], [0xf4fb,0xf4fe], [0xf825,0xf834], [0xfdf9,0xfe49],
   [0xfe60,0xfe66], [0xff3a,0xff3d], [0xff40,0xff43], [0xfff6,0xfff8]];
+if (stockScreen) allowed.push([0xe436, 0xe44f]);
 let changedBytes = 0;
 for (let offset = 0; offset < binary.length; offset++) {
   if (binary[offset] === stable[offset]) continue;
@@ -343,12 +363,14 @@ for (let offset = 0; offset < binary.length; offset++) {
   }
   changedBytes++;
 }
-const images = [['basic-universal-experimental.bin', binary.subarray(0, 8192)], ['kernal-universal-experimental.bin', binary.subarray(8192)]];
+const suffix = stockScreen ? '-stock-screen' : '';
+const images = [[`basic-universal-experimental${suffix}.bin`, binary.subarray(0, 8192)], [`kernal-universal-experimental${suffix}.bin`, binary.subarray(8192)]];
 const report = { experimental: true, experiment: 3, basicBytes: 8192, kernalBytes: 8192, preservedLabels,
   changedBytesFromStable: changedBytes, images: {}, stockGarbageCollector: true,
   sharedViaWrites: { addresses: ['$913E', '$913B'], rawInstructionBytesSaved: 6,
     skipBranchBytes: 2, usableBytesRecovered: 4, recoveredRange: '$FE35-$FE38', nowUsedFor: 'PAL text' },
-  regionDisplay: { row: 3, column: 6, labels: ['PAL', 'NTSC'], matchedPairRequired: true },
+  screen: stockScreen ? 'stock' : 'rainbow',
+  regionDisplay: { row: 3, column: stockScreen ? 0 : 6, labels: ['PAL', 'NTSC'], matchedPairRequired: true },
   ram: { valCleanup: '$02A1-$02A4', regionFlag: '$02A6 (sign bit PAL=1, NTSC=0)' } };
 const git = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' });
 if (git.status !== 0) throw new Error('Cannot determine source commit');
@@ -359,5 +381,5 @@ for (const [name, bytes] of images) {
 }
 fs.writeFileSync(path.join(out, 'build-report.json'), JSON.stringify(report, null, 2) + '\n');
 fs.writeFileSync(path.join(out, 'SHA256SUMS'), Object.entries(report.images).map(([name, hash]) => `${hash}  ${name}`).join('\n') + '\n');
-fs.copyFileSync(path.join(root, 'docs/wiki/Universal-Experimental.md'), path.join(out, 'README.md'));
+fs.copyFileSync(path.join(root, stockScreen ? 'docs/wiki/Universal-Stock-Screen.md' : 'docs/wiki/Universal-Experimental.md'), path.join(out, 'README.md'));
 console.log(JSON.stringify(report, null, 2));

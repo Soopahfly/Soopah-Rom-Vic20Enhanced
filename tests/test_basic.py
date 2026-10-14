@@ -9,8 +9,9 @@ sys.path.insert(0, str(ROOT / '.tools'))
 from py65.devices.mpu6502 import MPU
 
 EXPERIMENTAL = os.environ.get('VIC20_EXPERIMENTAL') == '1'
-OUT = ROOT / ('build/universal' if EXPERIMENTAL else 'verification')
-FIXED = (ROOT / ('build/universal/vic20-universal.bin' if EXPERIMENTAL else 'build/vic20-fixed.bin')).read_bytes()
+UNIVERSAL = ROOT / ('build/universal-stock' if os.environ.get('VIC20_UNIVERSAL_SCREEN') == 'stock' else 'build/universal')
+OUT = UNIVERSAL if EXPERIMENTAL else ROOT / 'verification'
+FIXED = ((UNIVERSAL / 'vic20-universal.bin') if EXPERIMENTAL else ROOT / 'build/vic20-fixed.bin').read_bytes()
 ORIGINAL = ((ROOT / 'reference/basic.901486-01.bin').read_bytes()
             + (ROOT / 'reference/kernal.901486-07.bin').read_bytes())
 RETURN = 0x7FFF

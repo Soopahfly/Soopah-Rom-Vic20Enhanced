@@ -4,3 +4,4 @@
 - [Character Fonts](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/wiki/Character-Fonts)
 - [Compatibility And Testing](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/wiki/Compatibility-And-Testing)
 - [Universal Experimental](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/wiki/Universal-Experimental)
+- [Experiment 3 Stock Screen](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/wiki/Universal-Stock-Screen)

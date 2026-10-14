@@ -8,6 +8,11 @@ can be used without changing the required BASIC/KERNAL pairing.
 
 ## Downloads And Installation
 
+An independent [stock-screen Experiment 3 variant](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/wiki/Universal-Stock-Screen)
+retains every feature/fix but uses the original heading and layout without the
+rainbow, plus a PAL/NTSC label. It has its own prerelease and Actions artifact;
+the rainbow pair described on this page remains unchanged.
+
 Download the pair from the
 [Experiment 3 prerelease](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/releases/tag/universal-8k-exp3),
 or a successful Actions run's separate `vic20-universal-8k-experimental` artifact.

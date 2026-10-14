@@ -23,7 +23,7 @@ on:
         type: boolean
         default: true
       universal_experimental:
-        description: Also build the experimental 8 KB PAL/NTSC pair (all fixes and rainbow)
+        description: Also build Experiment 3 PAL/NTSC pairs with rainbow and stock screens
         type: boolean
         default: false
 
@@ -69,6 +69,23 @@ jobs:
           python tests/test_universal.py
           VIC20_EXPERIMENTAL=1 python tests/test_basic.py
           VIC20_EXPERIMENTAL=1 python tests/test_vic20.py
+          node scripts/build-universal.mjs --screen=stock
+          VIC20_UNIVERSAL_SCREEN=stock python tests/test_universal.py
+          VIC20_UNIVERSAL_SCREEN=stock VIC20_EXPERIMENTAL=1 python tests/test_basic.py
+      - name: Upload stock-screen Experiment 3 pair separately
+        if: github.event_name != 'workflow_dispatch' || inputs.universal_experimental
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: vic20-universal-8k-stock-screen-${{ github.run_number }}
+          path: |
+            build/universal-stock/*.bin
+            build/universal-stock/*.s
+            build/universal-stock/*.labels
+            build/universal-stock/*.json
+            build/universal-stock/*.md
+            build/universal-stock/SHA256SUMS
+          if-no-files-found: error
+          retention-days: 90
       - name: Upload experimental universal pair separately
         if: github.event_name != 'workflow_dispatch' || inputs.universal_experimental
         uses: actions/upload-artifact@v7.0.2

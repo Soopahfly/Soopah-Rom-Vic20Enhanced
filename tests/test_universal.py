@@ -1,11 +1,13 @@
 """Assembled experimental ROM tests; synthetic raster/VIA, not VICE or hardware."""
 import json
+import os
 import hashlib
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / 'build/universal'
+STOCK_SCREEN = os.environ.get('VIC20_UNIVERSAL_SCREEN') == 'stock'
+OUT = ROOT / ('build/universal-stock' if STOCK_SCREEN else 'build/universal')
 sys.path.insert(0, str(ROOT / '.tools'))
 from py65.devices.mpu6502 import MPU
 
@@ -13,6 +15,12 @@ ROM = (OUT / 'vic20-universal.bin').read_bytes()
 PAL = (ROOT / 'reference/kernal.901486-07.bin').read_bytes()
 STABLE = (ROOT / 'roms/vic20-fixed.bin').read_bytes()
 SYMBOLS = {}
+if STOCK_SCREEN:
+    rainbow = (ROOT / 'build/universal/vic20-universal.bin').read_bytes()
+    screen_ranges = ((0xE40F,0xE412),(0xE436,0xE44F),(0xE929,0xE975))
+    assert ROM[:8192] == rainbow[:8192], 'Experiment 3 BASIC must remain identical'
+    assert all(a == b or any(start <= i+0xC000 < end for start,end in screen_ranges)
+               for i,(a,b) in enumerate(zip(ROM,rainbow))), 'Non-screen Experiment 3 code changed'
 for line in (OUT / 'vic20-universal.labels').read_text().splitlines():
     _, address, name = line.split()
     SYMBOLS[name.lstrip('.')] = int(address, 16)
@@ -286,7 +294,8 @@ record('Normal modifier combinations select the original keyboard tables', 8)
 count = 0
 baseline_screens = {}
 for config in CONFIGS:
-    cpu, mem = machine(0xFD22, RasterMemory(config=config, rom=STABLE))
+    baseline = (ROOT / 'reference/basic.901486-01.bin').read_bytes() + PAL if STOCK_SCREEN else STABLE
+    cpu, mem = machine(0xFD22, RasterMemory(config=config, rom=baseline))
     run(cpu, stop=0xE5E8)
     base = mem[0x288] << 8
     colour = 0x9400 | (base & 0x300)
@@ -312,7 +321,7 @@ for region in ('PAL', 'NTSC'):
         for phase in (0, 130):
             cpu, mem = machine(0xFD22, RasterMemory(region, phase, config=config))
             run(cpu, stop=0xC644)
-            assert mem[0xCC] != 0 and mem[0xD6] == 5, 'Cursor must stay disabled before READY'
+            assert mem[0xCC] != 0 and mem[0xD6] == (3 if STOCK_SCREEN else 5), 'Cursor must stay disabled before READY'
             run(cpu, stop=0xE5E8)
             base = mem[0x288] << 8
             assert base == (0x1000 if 1 in blocks else 0x1E00), config
@@ -321,21 +330,25 @@ for region in ('PAL', 'NTSC'):
             assert mem[0x9124:0x9126] == ([38, 72] if region == 'PAL' else [137, 66])
             text = f'{free_bytes} BYTES FREE'
             screen_text = bytes(ord(c) & 0x3F if 'A' <= c <= 'Z' else ord(c) for c in text)
-            assert bytes(mem[base+50:base+50+len(text)]) == screen_text, (region, config, mem[base+44:base+66])
-            assert bytes(mem[base+132:base+138]) == bytes([18, 5, 1, 4, 25, 46])
-            assert (mem[0xD3], mem[0xD6]) == (0, 7)
+            memory_offset = 44 if STOCK_SCREEN else 50
+            ready_offset = 88 if STOCK_SCREEN else 132
+            input_offset = 110 if STOCK_SCREEN else 154
+            assert bytes(mem[base+memory_offset:base+memory_offset+len(text)]) == screen_text, (region, config)
+            assert bytes(mem[base+ready_offset:base+ready_offset+6]) == bytes([18, 5, 1, 4, 25, 46])
+            assert (mem[0xD3], mem[0xD6]) == (0, 5 if STOCK_SCREEN else 7)
             colour = 0x9400 | (base & 0x300)
             expected_screen, expected_colours = map(bytearray, baseline_screens[config])
             mode = bytes(ord(c) & 0x3F for c in region)
-            expected_screen[72:72+len(mode)] = mode
-            expected_colours[72:72+len(mode)] = bytes([6])*len(mode)
+            mode_offset = 66 if STOCK_SCREEN else 72
+            expected_screen[mode_offset:mode_offset+len(mode)] = mode
+            expected_colours[mode_offset:mode_offset+len(mode)] = bytes([6])*len(mode)
             assert (bytes(mem[base:base+506]), bytes(mem[colour:colour+506])) == (expected_screen, expected_colours), (region, config)
             before = bytes(mem[base:base+506])
             cpu, mem = machine(0xFFD2, mem, a=ord('A'))
             run(cpu)
             colour = 0x9400 | (base & 0x300)
-            assert mem[base+154] == 1 and mem[colour+154] == 6
-            assert bytes(mem[base:base+154]) == before[:154]
+            assert mem[base+input_offset] == 1 and mem[colour+input_offset] == 6
+            assert bytes(mem[base:base+input_offset]) == before[:input_offset]
             count += 1
 record('Reset to READY and typed character in both regions and RAM layouts', count)
 record('Cursor remains disabled until READY refreshes the editor pointers', count)
@@ -348,7 +361,7 @@ for name, image, flag in [('Stock PAL', STABLE[:8192]+PAL, 0x80),
     run(cpu, stop=0xFF46)
     setup_cycles[name] = cpu.processorCycles
 
-report = {'experimental': True, 'experiment': 3, 'allPassed': True, 'cases': sum(COUNTS.values()),
+report = {'experimental': True, 'experiment': 3, 'screen': 'stock' if STOCK_SCREEN else 'rainbow', 'allPassed': True, 'cases': sum(COUNTS.values()),
           'tests': COUNTS, 'maximumDetectionCycles': max_cycles,
           'receiveStartTimerSetupCycles': setup_cycles,
           'ioinitCycles': ioinit_cycles,
