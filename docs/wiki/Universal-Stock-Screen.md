@@ -1,4 +1,4 @@
-# Experiment 3: Stock Screen Plus Region
+# Stock Universal V2.26U: Experiment 3
 
 A separate experimental variant of the universal PAL/NTSC pair. All Experiment 3
 features and correctness fixes remain; only startup presentation changes.
@@ -6,25 +6,27 @@ The original rainbow Experiment 3 release and stable PAL ROMs remain available.
 
 ## Screen
 
-The heading is `** CBM BASIC V2.26 **`, framed by two stars on each side.
-One trailing blank keeps its original 22-column field and line-wrap behaviour.
+The heading is `** CBM BASIC V2.26U **`, framed by two stars on each side.
+It occupies exactly 22 columns without padding, retaining stock line-wrap behaviour.
 There is no
 rainbow or six-column indentation. The memory count retains its stock row and
 alignment. PAL or NTSC appears in blue on the blank row between the memory count
 and READY, at row three, column zero. READY stays on row four and typing starts
 on row five (zero-based). Stock blue text, white background and cyan border remain.
-V2.26 identifies this project's build, not a changed BASIC language or token set.
+V2.26U identifies the stock Universal PAL/NTSC variant; U means Universal.
+The rainbow variant keeps its existing V2.26 heading. Neither name changes the
+BASIC language or token set.
 
 ![ROM-rendered stock startup plus PAL label](https://raw.githubusercontent.com/Soopahfly/Soopah-Rom-Vic20Enhanced/main/docs/universal-stock-screen.png)
 
 ## Downloads
 
-[V2.26 stock-screen prerelease](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/releases/tag/universal-8k-exp3-stock-screen-v226):
+[V2.26U stock Universal prerelease](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/releases/tag/universal-8k-exp3-stock-screen-v226u):
 
-- [KERNAL](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/releases/download/universal-8k-exp3-stock-screen-v226/kernal-universal-experimental-stock-screen.bin)
-- [BASIC](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/releases/download/universal-8k-exp3-stock-screen-v226/basic-universal-experimental-stock-screen.bin)
+- [KERNAL](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/releases/download/universal-8k-exp3-stock-screen-v226u/kernal-universal-experimental-stock-screen.bin)
+- [BASIC](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/releases/download/universal-8k-exp3-stock-screen-v226u/basic-universal-experimental-stock-screen.bin)
 
-The earlier stock-screen release with the original V2 heading remains available
+Earlier stock-screen releases with V2 and V2.26 headings remain available
 unchanged for comparison. This update changes only the 25-byte heading field.
 
 Use both supplied 8192-byte images together. BASIC is byte-identical to the
@@ -42,7 +44,7 @@ Both ROMs remain 8 KB and all 1409 original addresses are preserved.
 
 Tests compare every non-screen byte against rainbow Experiment 3, require
 identical BASIC, and compare entire screen/colour RAM against production stock
-with only the V2.26 heading and mode label changed. PAL and NTSC are tested at two raster phases in
+with only the V2.26U heading and mode label changed. PAL and NTSC are tested at two raster phases in
 all ten existing RAM layouts, including five-digit counts and typing at the
 original input position. Universal tests cover 2382 cases; BASIC tests cover 193.
 

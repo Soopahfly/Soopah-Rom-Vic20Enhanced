@@ -11,7 +11,7 @@ The language and token set remain standard BASIC V2.
 - [Default ROMs](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/tree/main/roms)
 - [Character Fonts](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/wiki/Character-Fonts): clean 5x7 and compact 5x6, each with smooth or striped tips.
 - [Universal Experimental](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/wiki/Universal-Experimental): 8 KB PAL/NTSC pair for VICE testing.
-- [Experiment 3 Stock Screen](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/wiki/Universal-Stock-Screen): original layout without rainbow, plus PAL/NTSC.
+- [Stock Universal V2.26U](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/wiki/Universal-Stock-Screen): stock layout without rainbow, plus PAL/NTSC.
 
 All eight option combinations are supported. All three choices default to enabled.
 The stable PAL build allocates no permanent RAM; an unexpanded machine still displays 3583 bytes

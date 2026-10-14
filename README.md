@@ -56,10 +56,11 @@ See [font notes, checksums and rebuilding](docs/chargen-fonts.md).
 ### Experimental PAL/NTSC Pair
 
 Experiment 3 also has a separate [stock-screen variant](docs/wiki/Universal-Stock-Screen.md):
-star-framed BASIC V2.26 heading, stock memory/READY/input positions, no rainbow,
+star-framed `** CBM BASIC V2.26U **` heading, stock memory/READY/input positions, no rainbow,
 plus PAL/NTSC on the blank row before READY. All Experiment 3 functionality and
 fixes remain. Both 8 KB files are supplied separately; the existing rainbow
-release is unchanged. Actions produces a separate stock-screen artifact too.
+release is unchanged. U identifies the stock Universal variant; the rainbow
+version keeps V2.26. Actions produces a separate stock-screen artifact too.
 
 An **8 KB universal KERNAL** and matching 8 KB BASIC are available for testing.
 Experiment 3 adds a blue PAL/NTSC label beneath the memory count without moving
@@ -157,8 +158,8 @@ See [build choices](docs/wiki/Building-ROMs.md) and
 [patch notes](docs/wiki/Patch-Notes.md), also published on the
 [GitHub wiki](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/wiki).
 
-The optional **universal_experimental** switch builds the universal test pair
-as a separate artifact. It currently has fixes, rainbow and V2.26 enabled;
+The optional **universal_experimental** switch builds both universal test pairs
+as separate artifacts: rainbow V2.26 and stock-layout V2.26U, both with fixes;
 the eight selectable stable PAL combinations remain unchanged.
 
 ```sh

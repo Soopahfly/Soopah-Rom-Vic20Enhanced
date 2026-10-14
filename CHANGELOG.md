@@ -1,5 +1,13 @@
 # Changelog
 
+## Stock Universal V2.26U - 2026-10-14
+
+- Name the stock-layout universal variant V2.26U, with U meaning Universal.
+- Use `** CBM BASIC V2.26U **`, exactly 22 columns with balanced framing stars.
+- Preserve rainbow Experiment 3's V2.26 heading and identical released ROM bytes.
+- Retain all Experiment 3 features and fixes, stock layout and PAL/NTSC label.
+- Publish an independent V2.26U prerelease, preserving all earlier downloads.
+
 ## Stock-Screen V2.26 Heading - 2026-10-14
 
 - Update the stock-layout Experiment 3 heading to `** CBM BASIC V2.26 **`.

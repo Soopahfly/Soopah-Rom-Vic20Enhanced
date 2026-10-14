@@ -9,7 +9,7 @@ can be used without changing the required BASIC/KERNAL pairing.
 ## Downloads And Installation
 
 An independent [stock-screen Experiment 3 variant](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/wiki/Universal-Stock-Screen)
-retains every feature/fix but uses a star-framed V2.26 heading and stock layout without the
+retains every feature/fix but uses a star-framed V2.26U heading and stock layout without the
 rainbow, plus a PAL/NTSC label. It has its own prerelease and Actions artifact;
 the rainbow pair described on this page remains unchanged.
 

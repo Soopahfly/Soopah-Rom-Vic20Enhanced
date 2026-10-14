@@ -321,10 +321,10 @@ for (const obsolete of ['FIX_VAL_SAVE_SCRATCH', 'FIX_VAL_NORMAL']) replace(`.exp
 region('FIX_GC_MOVE', 'LAB_DF71', basicVal);
 source += '\nUNI_REGION = $02A6\n.export UNI_REGION, UNI_DETECT, UNI_DETECT_PRESERVE, UNI_VIDEO, UNI_TICK, UNI_BAUD_BYTE, UNI_BAUD_HIGH, UNI_KEY_READ, UNI_NTSC_PREFIX, UNI_IOINIT_SPARE, UNI_SHOW_REGION, UNI_PRINT_REGION\n';
 if (stockScreen) {
-  replace('\tJSR\tFIX_BOOT_HEADING\t\t; print heading and align the following memory count', '\tJSR LAB_CB1E ; stock memory-count alignment, star-framed V2.26 heading');
-  // Shorten the framing stars, not the version, to retain the 22-column field.
-  // One trailing space preserves the stock wrap/CR and subsequent row positions.
-  region('LAB_E436', 'LAB_E44F', `LAB_E436\n; Stock layout, updated version, identical heading-field size.\n    .byte $93,"** CBM BASIC V2.26 ** ",$0D,$00`);
+  replace('\tJSR\tFIX_BOOT_HEADING\t\t; print heading and align the following memory count', '\tJSR LAB_CB1E ; stock memory-count alignment, star-framed V2.26U heading');
+  // U identifies the stock Universal variant. Balanced stars and the version
+  // occupy exactly 22 columns, preserving stock wrap/CR and subsequent rows.
+  region('LAB_E436', 'LAB_E44F', `LAB_E436\n; Stock Universal V2.26U: identical heading-field size, no padding blank.\n    .byte $93,"** CBM BASIC V2.26U **",$0D,$00`);
 }
 const generated = path.join(out, 'vic20-universal.s');
 fs.writeFileSync(generated, '; EXPERIMENT 3: region label; use the matching experimental ROM pair.\n' + source);
@@ -371,6 +371,7 @@ const report = { experimental: true, experiment: 3, basicBytes: 8192, kernalByte
   sharedViaWrites: { addresses: ['$913E', '$913B'], rawInstructionBytesSaved: 6,
     skipBranchBytes: 2, usableBytesRecovered: 4, recoveredRange: '$FE35-$FE38', nowUsedFor: 'PAL text' },
   screen: stockScreen ? 'stock' : 'rainbow',
+  buildIdentifier: stockScreen ? 'V2.26U' : 'V2.26',
   regionDisplay: { row: 3, column: stockScreen ? 0 : 6, labels: ['PAL', 'NTSC'], matchedPairRequired: true },
   ram: { valCleanup: '$02A1-$02A4', regionFlag: '$02A6 (sign bit PAL=1, NTSC=0)' } };
 const git = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' });
