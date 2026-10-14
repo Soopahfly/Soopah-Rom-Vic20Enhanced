@@ -6,21 +6,26 @@ The original rainbow Experiment 3 release and stable PAL ROMs remain available.
 
 ## Screen
 
-The heading is the original `**** CBM BASIC V2 ****`, not V2.26. There is no
+The heading is `** CBM BASIC V2.26 **`, framed by two stars on each side.
+One trailing blank keeps its original 22-column field and line-wrap behaviour.
+There is no
 rainbow or six-column indentation. The memory count retains its stock row and
 alignment. PAL or NTSC appears in blue on the blank row between the memory count
 and READY, at row three, column zero. READY stays on row four and typing starts
 on row five (zero-based). Stock blue text, white background and cyan border remain.
-The ROM still uses this project's Experiment 3 code despite the stock BASIC V2 heading.
+V2.26 identifies this project's build, not a changed BASIC language or token set.
 
 ![ROM-rendered stock startup plus PAL label](https://raw.githubusercontent.com/Soopahfly/Soopah-Rom-Vic20Enhanced/main/docs/universal-stock-screen.png)
 
 ## Downloads
 
-[Separate prerelease](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/releases/tag/universal-8k-exp3-stock-screen):
+[V2.26 stock-screen prerelease](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/releases/tag/universal-8k-exp3-stock-screen-v226):
 
-- [KERNAL](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/releases/download/universal-8k-exp3-stock-screen/kernal-universal-experimental-stock-screen.bin)
-- [BASIC](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/releases/download/universal-8k-exp3-stock-screen/basic-universal-experimental-stock-screen.bin)
+- [KERNAL](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/releases/download/universal-8k-exp3-stock-screen-v226/kernal-universal-experimental-stock-screen.bin)
+- [BASIC](https://github.com/Soopahfly/Soopah-Rom-Vic20Enhanced/releases/download/universal-8k-exp3-stock-screen-v226/basic-universal-experimental-stock-screen.bin)
+
+The earlier stock-screen release with the original V2 heading remains available
+unchanged for comparison. This update changes only the 25-byte heading field.
 
 Use both supplied 8192-byte images together. BASIC is byte-identical to the
 rainbow Experiment 3 BASIC; if you already use that exact BASIC it need not be
@@ -37,7 +42,7 @@ Both ROMs remain 8 KB and all 1409 original addresses are preserved.
 
 Tests compare every non-screen byte against rainbow Experiment 3, require
 identical BASIC, and compare entire screen/colour RAM against production stock
-with only the mode label added. PAL and NTSC are tested at two raster phases in
+with only the V2.26 heading and mode label changed. PAL and NTSC are tested at two raster phases in
 all ten existing RAM layouts, including five-digit counts and typing at the
 original input position. Universal tests cover 2382 cases; BASIC tests cover 193.
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## Stock-Screen V2.26 Heading - 2026-10-14
+
+- Update the stock-layout Experiment 3 heading to `** CBM BASIC V2.26 **`.
+- Reduce framing stars and retain a trailing blank to fit the original 22 columns.
+- Keep stock rows, no rainbow, PAL/NTSC label and every Experiment 3 feature.
+- Refresh the separate prerelease images, preview, checksums and wiki.
+
 ## Experiment 3 Stock-Screen Variant - 2026-10-14
 
 - Add an independent 8 KB universal pair with the original starred BASIC V2

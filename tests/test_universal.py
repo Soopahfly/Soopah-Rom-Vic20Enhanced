@@ -16,6 +16,7 @@ PAL = (ROOT / 'reference/kernal.901486-07.bin').read_bytes()
 STABLE = (ROOT / 'roms/vic20-fixed.bin').read_bytes()
 SYMBOLS = {}
 if STOCK_SCREEN:
+    assert ROM[0x2436:0x244f] == b'\x93** CBM BASIC V2.26 ** \r\x00', 'Stock-layout version heading must fit the original field'
     rainbow = (ROOT / 'build/universal/vic20-universal.bin').read_bytes()
     screen_ranges = ((0xE40F,0xE412),(0xE436,0xE44F),(0xE929,0xE975))
     assert ROM[:8192] == rainbow[:8192], 'Experiment 3 BASIC must remain identical'
@@ -338,6 +339,11 @@ for region in ('PAL', 'NTSC'):
             assert (mem[0xD3], mem[0xD6]) == (0, 5 if STOCK_SCREEN else 7)
             colour = 0x9400 | (base & 0x300)
             expected_screen, expected_colours = map(bytearray, baseline_screens[config])
+            if STOCK_SCREEN:
+                # The original rows/colours remain; only version text and the
+                # mode label differ from the production stock screen.
+                heading = '** CBM BASIC V2.26 ** '
+                expected_screen[:22] = bytes(ord(c)-64 if 'A' <= c <= 'Z' else ord(c) for c in heading)
             mode = bytes(ord(c) & 0x3F for c in region)
             mode_offset = 66 if STOCK_SCREEN else 72
             expected_screen[mode_offset:mode_offset+len(mode)] = mode

@@ -321,9 +321,10 @@ for (const obsolete of ['FIX_VAL_SAVE_SCRATCH', 'FIX_VAL_NORMAL']) replace(`.exp
 region('FIX_GC_MOVE', 'LAB_DF71', basicVal);
 source += '\nUNI_REGION = $02A6\n.export UNI_REGION, UNI_DETECT, UNI_DETECT_PRESERVE, UNI_VIDEO, UNI_TICK, UNI_BAUD_BYTE, UNI_BAUD_HIGH, UNI_KEY_READ, UNI_NTSC_PREFIX, UNI_IOINIT_SPARE, UNI_SHOW_REGION, UNI_PRINT_REGION\n';
 if (stockScreen) {
-  replace('\tJSR\tFIX_BOOT_HEADING\t\t; print heading and align the following memory count', '\tJSR LAB_CB1E ; original heading and memory-count alignment');
-  const original = fs.readFileSync(path.join(root, 'reference/kernal.901486-07.bin'));
-  region('LAB_E436', 'LAB_E44F', `LAB_E436\n; Original production heading, including framing stars and line behaviour.\n    .byte ${[...original.subarray(0x436, 0x44f)].map(b => '$' + b.toString(16).padStart(2, '0')).join(',')}`);
+  replace('\tJSR\tFIX_BOOT_HEADING\t\t; print heading and align the following memory count', '\tJSR LAB_CB1E ; stock memory-count alignment, star-framed V2.26 heading');
+  // Shorten the framing stars, not the version, to retain the 22-column field.
+  // One trailing space preserves the stock wrap/CR and subsequent row positions.
+  region('LAB_E436', 'LAB_E44F', `LAB_E436\n; Stock layout, updated version, identical heading-field size.\n    .byte $93,"** CBM BASIC V2.26 ** ",$0D,$00`);
 }
 const generated = path.join(out, 'vic20-universal.s');
 fs.writeFileSync(generated, '; EXPERIMENT 3: region label; use the matching experimental ROM pair.\n' + source);

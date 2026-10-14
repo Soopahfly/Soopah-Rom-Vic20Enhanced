@@ -56,7 +56,7 @@ See [font notes, checksums and rebuilding](docs/chargen-fonts.md).
 ### Experimental PAL/NTSC Pair
 
 Experiment 3 also has a separate [stock-screen variant](docs/wiki/Universal-Stock-Screen.md):
-original starred BASIC V2 heading, stock memory/READY/input positions, no rainbow,
+star-framed BASIC V2.26 heading, stock memory/READY/input positions, no rainbow,
 plus PAL/NTSC on the blank row before READY. All Experiment 3 functionality and
 fixes remain. Both 8 KB files are supplied separately; the existing rainbow
 release is unchanged. Actions produces a separate stock-screen artifact too.
